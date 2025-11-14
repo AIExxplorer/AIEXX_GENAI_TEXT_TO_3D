@@ -36,10 +36,7 @@ dist
 npm install
 ```
 
-### 7. **Development Command**
-```
-npm run dev
-```
+> **Nota**: O campo "Development Command" não está disponível na interface inicial do Vercel. Ele será configurado automaticamente pelo arquivo `web/vercel.json` se necessário.
 
 ---
 
@@ -87,13 +84,6 @@ npm run dev
 │  │ npm install                       │  │
 │  └───────────────────────────────────┘  │
 └─────────────────────────────────────────┘
-
-┌─────────────────────────────────────────┐
-│  Development Command                    │
-│  ┌───────────────────────────────────┐  │
-│  │ npm run dev                       │  │
-│  └───────────────────────────────────┘  │
-└─────────────────────────────────────────┘
 ```
 
 ---
@@ -106,20 +96,16 @@ npm run dev
 - [ ] **Build Command**: `npm install && npm run build`
 - [ ] **Output Directory**: `dist`
 - [ ] **Install Command**: `npm install`
-- [ ] **Development Command**: `npm run dev`
 
 ---
 
 ## 🔧 Configurações Adicionais (Opcional)
 
-### Environment Variables
+### Environment Variables ⚠️ SEGURANÇA
 
-Se necessário, adicione:
+**IMPORTANTE**: Como o repositório é público, NUNCA adicione valores reais aqui diretamente. Use apenas variáveis de ambiente no Vercel Dashboard.
 
-```
-VITE_API_URL=https://api.aiexx.com
-NODE_ENV=production
-```
+Consulte [.github/VERCEL_SECURITY.md](.github/VERCEL_SECURITY.md) para instruções detalhadas sobre segurança.
 
 ### Production Branch
 
