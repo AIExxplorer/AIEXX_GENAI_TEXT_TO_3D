@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 
 /**
  * Componente principal da aplicação
@@ -23,6 +24,7 @@ function App(): JSX.Element {
           }
         />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }

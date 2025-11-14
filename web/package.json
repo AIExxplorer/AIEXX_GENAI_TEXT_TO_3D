@@ -15,10 +15,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
+    "axios": "^1.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
-    "axios": "^1.6.2",
     "three": "^0.160.0",
     "zustand": "^4.4.7"
   },
@@ -62,4 +63,3 @@
   },
   "homepage": "https://github.com/AIExxplorer/AIEXX_GENAI_TEXT_TO_3D#readme"
 }
-
