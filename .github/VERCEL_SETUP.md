@@ -53,14 +53,7 @@ ou
 cd web && npm install
 ```
 
-### 7. **Development Command**
-```
-npm run dev
-```
-ou
-```
-cd web && npm run dev
-```
+> **Nota**: O campo "Development Command" não está disponível na interface inicial do Vercel. Ele será configurado automaticamente pelo arquivo `web/vercel.json` se necessário.
 
 ## 🔧 Configurações Adicionais Recomendadas
 
