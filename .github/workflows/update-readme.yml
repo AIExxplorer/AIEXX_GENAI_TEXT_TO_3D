@@ -1,0 +1,67 @@
+name: 📝 Atualizar README com Changelog
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'CHANGELOG.md'
+      - 'README.md'
+
+jobs:
+  update-readme:
+    name: Atualizar README.md
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configurar Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Extrair últimas mudanças do CHANGELOG
+        id: changelog
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            # Extrair as últimas 5 entradas do changelog
+            LATEST_CHANGES=$(sed -n '/^## \[/,/^## \[/p' CHANGELOG.md | head -n 30)
+            echo "changes<<EOF" >> $GITHUB_OUTPUT
+            echo "$LATEST_CHANGES" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "changes=Sem mudanças registradas ainda." >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Atualizar README.md
+        run: |
+          # Criar seção de changelog no README se não existir
+          if ! grep -q "## 📝 Changelog" README.md; then
+            echo "" >> README.md
+            echo "## 📝 Changelog" >> README.md
+            echo "" >> README.md
+            echo "### Últimas Mudanças" >> README.md
+            echo "" >> README.md
+            echo '${{ steps.changelog.outputs.changes }}' >> README.md
+            echo "" >> README.md
+            echo "Para ver o changelog completo, consulte [CHANGELOG.md](CHANGELOG.md)" >> README.md
+          else
+            # Atualizar seção existente
+            # Remover seção antiga
+            sed -i '/## 📝 Changelog/,/^## /{ /^## 📝 Changelog/!{ /^## /!d; }; }' README.md
+            
+            # Adicionar nova seção
+            sed -i '/## 📝 Changelog/a\\n### Últimas Mudanças\n\n${{ steps.changelog.outputs.changes }}\n\nPara ver o changelog completo, consulte [CHANGELOG.md](CHANGELOG.md)\n' README.md
+          fi
+      
+      - name: Commit mudanças
+        run: |
+          git add README.md
+          git diff --staged --quiet || git commit -m "docs(readme): atualizar changelog no README [skip release]"
+          git push || echo "Nenhuma mudança para fazer commit"
+

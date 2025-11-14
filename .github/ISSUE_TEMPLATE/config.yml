@@ -1,0 +1,12 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussões da Comunidade
+    url: https://github.com/AIEXX_GENAI_TEXT_TO_3D/AIEXX_GENAI_TEXT_TO_3D/discussions
+    about: Faça perguntas e discuta ideias com a comunidade
+  - name: 📚 Documentação
+    url: https://github.com/AIEXX_GENAI_TEXT_TO_3D/AIEXX_GENAI_TEXT_TO_3D/wiki
+    about: Consulte a documentação do projeto
+  - name: 🔒 Reportar Vulnerabilidade de Segurança
+    url: https://github.com/AIEXX_GENAI_TEXT_TO_3D/AIEXX_GENAI_TEXT_TO_3D/security/advisories/new
+    about: Reporte vulnerabilidades de segurança de forma privada
+
