@@ -3,17 +3,23 @@ name: 🚀 Release Automático
 on:
   push:
     branches:
+      - master
       - main
     paths-ignore:
       - '**.md'
-      - '.github/**'
+      - '.github/workflows/**'
       - 'docs/**'
+      - 'README.md'
+  workflow_dispatch:
 
 jobs:
   release:
-    name: Criar Release
+    name: Criar Release Automático
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip release]')"
+    permissions:
+      contents: write
+      pull-requests: read
     
     steps:
       - name: Checkout código
@@ -27,13 +33,16 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
       
-      - name: Verificar se há mudanças
+      - name: Verificar se há mudanças significativas
         id: changes
         run: |
-          if git diff --quiet HEAD~1 HEAD -- . ':!*.md' ':!.github/**' ':!docs/**'; then
+          # Verificar se há mudanças em arquivos de código (não apenas docs)
+          if git diff --quiet HEAD~1 HEAD -- . ':!*.md' ':!.github/workflows/**' ':!docs/**' ':!README.md'; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "Nenhuma mudança significativa detectada"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Mudanças significativas detectadas"
           fi
       
       - name: Obter última tag
@@ -49,25 +58,41 @@ jobs:
           LAST_TAG=${{ steps.last_tag.outputs.tag }}
           VERSION=${LAST_TAG#v}
           
+          # Se não há tag anterior, começar em 0.1.0
+          if [ "$VERSION" = "0.0.0" ]; then
+            VERSION="0.1.0"
+          fi
+          
           # Extrair major, minor, patch
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
           
           # Verificar tipo de commit (usando Conventional Commits)
           COMMIT_MSG=$(git log -1 --pretty=%B)
+          COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"%s" --no-merges)
           
-          if echo "$COMMIT_MSG" | grep -qE "^feat(\(.+\))?:"; then
+          # Verificar se há breaking changes
+          if echo "$COMMITS" | grep -qE "BREAKING CHANGE|^[^:]+!:"; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            BUMP_TYPE="major"
+            RELEASE_TYPE="🚨 Breaking Change"
+          elif echo "$COMMITS" | grep -qE "^feat(\(.+\))?:"; then
             # Feature: incrementa minor
             MINOR=$((MINOR + 1))
             PATCH=0
             BUMP_TYPE="minor"
-          elif echo "$COMMIT_MSG" | grep -qE "^(fix|bugfix)(\(.+\))?:"; then
+            RELEASE_TYPE="✨ Feature"
+          elif echo "$COMMITS" | grep -qE "^(fix|bugfix)(\(.+\))?:"; then
             # Bugfix: incrementa patch
             PATCH=$((PATCH + 1))
             BUMP_TYPE="patch"
+            RELEASE_TYPE="🐛 Bug Fix"
           else
             # Outros: incrementa patch
             PATCH=$((PATCH + 1))
             BUMP_TYPE="patch"
+            RELEASE_TYPE="📦 Update"
           fi
           
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
@@ -76,7 +101,8 @@ jobs:
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
           echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
-          echo "Nova versão: $NEW_TAG"
+          echo "release_type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+          echo "Nova versão: $NEW_TAG ($RELEASE_TYPE)"
       
       - name: Criar tag
         if: steps.changes.outputs.has_changes == 'true'
@@ -84,63 +110,144 @@ jobs:
           git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
           git push origin "${{ steps.version.outputs.tag }}"
       
-      - name: Criar release via API
+      - name: Gerar notas de release
+        if: steps.changes.outputs.has_changes == 'true'
+        id: release_notes
+        run: |
+          LAST_TAG=${{ steps.last_tag.outputs.tag }}
+          NEW_TAG=${{ steps.version.outputs.tag }}
+          
+          # Obter commits desde a última tag
+          COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          
+          # Categorizar commits
+          FEATURES=$(echo "$COMMITS" | grep -E "^- feat" || echo "")
+          FIXES=$(echo "$COMMITS" | grep -E "^- (fix|bugfix)" || echo "")
+          DOCS=$(echo "$COMMITS" | grep -E "^- docs" || echo "")
+          OTHERS=$(echo "$COMMITS" | grep -vE "^- (feat|fix|bugfix|docs)" || echo "")
+          
+          # Criar body do release
+          BODY=$(cat <<EOF
+          ## 🎉 Release $NEW_TAG - ${{ steps.version.outputs.release_type }}
+          
+          ### 📝 Resumo
+          
+          - **Tipo**: ${{ steps.version.outputs.bump_type }} (${{ steps.version.outputs.release_type }})
+          - **Versão Anterior**: $LAST_TAG
+          - **Nova Versão**: $NEW_TAG
+          - **Data**: $(date +"%Y-%m-%d")
+          
+          ### ✨ Novas Features
+          $([ -n "$FEATURES" ] && echo "$FEATURES" || echo "- Nenhuma feature nova")
+          
+          ### 🐛 Correções
+          $([ -n "$FIXES" ] && echo "$FIXES" || echo "- Nenhuma correção")
+          
+          ### 📚 Documentação
+          $([ -n "$DOCS" ] && echo "$DOCS" || echo "- Nenhuma atualização de documentação")
+          
+          ### 🔧 Outras Mudanças
+          $([ -n "$OTHERS" ] && echo "$OTHERS" || echo "- Nenhuma outra mudança")
+          
+          ---
+          
+          **📋 Commits Incluídos**: $(echo "$COMMITS" | wc -l)
+          
+          **🔗 Ver mudanças**: [Compare $LAST_TAG...$NEW_TAG](https://github.com/${{ github.repository }}/compare/$LAST_TAG...$NEW_TAG)
+          
+          ---
+          
+          **🤖 Gerado automaticamente pelo GitHub Actions**
+          EOF
+          )
+          
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Criar release via GitHub API
         if: steps.changes.outputs.has_changes == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          COMMITS=$(git log ${{ steps.last_tag.outputs.tag }}..HEAD --pretty=format:"- %s (%h)" --no-merges)
-          
-          BODY=$(cat <<EOF
-          ## 🎉 Release ${{ steps.version.outputs.tag }}
-          
-          ### 📝 Mudanças
-          
-          ${{ github.event.head_commit.message }}
-          
-          ### 📦 Tipo de Release
-          - **Tipo**: ${{ steps.version.outputs.bump_type }}
-          - **Versão Anterior**: ${{ steps.last_tag.outputs.tag }}
-          - **Nova Versão**: ${{ steps.version.outputs.tag }}
-          
-          ### 📋 Commits Incluídos
-          
-          $COMMITS
-          
-          ---
-          
-          **Gerado automaticamente pelo GitHub Actions**
-          EOF
-          )
-          
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }}/releases \
-            -d "{\"tag_name\":\"${{ steps.version.outputs.tag }}\",\"name\":\"Release ${{ steps.version.outputs.tag }}\",\"body\":$(echo "$BODY" | jq -Rs .),\"draft\":false,\"prerelease\":false}"
+            -d @- <<EOF
+          {
+            "tag_name": "${{ steps.version.outputs.tag }}",
+            "name": "Release ${{ steps.version.outputs.tag }} - ${{ steps.version.outputs.release_type }}",
+            "body": $(echo '${{ steps.release_notes.outputs.body }}' | jq -Rs .),
+            "draft": false,
+            "prerelease": false
+          }
+          EOF
       
       - name: Atualizar CHANGELOG.md
         if: steps.changes.outputs.has_changes == 'true'
         run: |
           NEW_TAG="${{ steps.version.outputs.tag }}"
           DATE=$(date +"%Y-%m-%d")
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          
+          # Obter commits categorizados
+          LAST_TAG=${{ steps.last_tag.outputs.tag }}
+          COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"%s" --no-merges)
+          
+          FEATURES=$(echo "$COMMITS" | grep -E "^feat" || echo "")
+          FIXES=$(echo "$COMMITS" | grep -E "^(fix|bugfix)" || echo "")
+          DOCS=$(echo "$COMMITS" | grep -E "^docs" || echo "")
           
           # Criar ou atualizar CHANGELOG.md
           if [ ! -f CHANGELOG.md ]; then
-            echo "# Changelog" > CHANGELOG.md
-            echo "" >> CHANGELOG.md
-            echo "Todas as mudanças notáveis neste projeto serão documentadas neste arquivo." >> CHANGELOG.md
-            echo "" >> CHANGELOG.md
-            echo "O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)," >> CHANGELOG.md
-            echo "e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/)." >> CHANGELOG.md
-            echo "" >> CHANGELOG.md
+            cat > CHANGELOG.md << 'HEADER'
+# Changelog
+
+Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+
+O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
+e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+
+HEADER
           fi
           
-          # Adicionar nova entrada no topo
-          sed -i "1i\\\n## [$NEW_TAG] - $DATE\n\n### $COMMIT_MSG\n" CHANGELOG.md
+          # Criar entrada do changelog
+          CHANGELOG_ENTRY=$(cat <<EOF
+
+## [$NEW_TAG] - $DATE
+
+### ${{ steps.version.outputs.release_type }}
+
+EOF
+          )
+          
+          if [ -n "$FEATURES" ]; then
+            CHANGELOG_ENTRY+="### ✨ Adicionado"$'\n'
+            echo "$FEATURES" | sed 's/^/- /' | while read line; do
+              CHANGELOG_ENTRY+="$line"$'\n'
+            done
+            CHANGELOG_ENTRY+=$'\n'
+          fi
+          
+          if [ -n "$FIXES" ]; then
+            CHANGELOG_ENTRY+="### 🐛 Corrigido"$'\n'
+            echo "$FIXES" | sed 's/^/- /' | while read line; do
+              CHANGELOG_ENTRY+="$line"$'\n'
+            done
+            CHANGELOG_ENTRY+=$'\n'
+          fi
+          
+          if [ -n "$DOCS" ]; then
+            CHANGELOG_ENTRY+="### 📚 Documentação"$'\n'
+            echo "$DOCS" | sed 's/^/- /' | while read line; do
+              CHANGELOG_ENTRY+="$line"$'\n'
+            done
+            CHANGELOG_ENTRY+=$'\n'
+          fi
+          
+          # Adicionar no topo do arquivo (após header)
+          sed -i "/^## \[/i\\$CHANGELOG_ENTRY" CHANGELOG.md
           
           git add CHANGELOG.md
-          git commit -m "docs(changelog): atualizar changelog para $NEW_TAG" || exit 0
+          git commit -m "docs(changelog): atualizar changelog para $NEW_TAG [skip release]" || exit 0
           git push
-

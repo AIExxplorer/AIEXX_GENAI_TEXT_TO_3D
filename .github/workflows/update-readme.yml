@@ -1,17 +1,26 @@
-name: 📝 Atualizar README com Changelog
+name: 📝 Atualizar README Automaticamente
 
 on:
   push:
     branches:
+      - master
       - main
     paths:
       - 'CHANGELOG.md'
-      - 'README.md'
+      - 'src/**'
+      - 'projects/**'
+      - 'web/**'
+      - 'viewer3d/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
 
 jobs:
   update-readme:
-    name: Atualizar README.md
+    name: Atualizar README.md com últimas mudanças
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     
     steps:
       - name: Checkout código
@@ -25,43 +34,137 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
       
+      - name: Obter informações do último commit
+        id: commit_info
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+          COMMIT_DATE=$(git log -1 --pretty=%cd --date=short)
+          COMMIT_HASH=$(git log -1 --pretty=%h)
+          
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMIT_MSG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "author=$COMMIT_AUTHOR" >> $GITHUB_OUTPUT
+          echo "date=$COMMIT_DATE" >> $GITHUB_OUTPUT
+          echo "hash=$COMMIT_HASH" >> $GITHUB_OUTPUT
+      
       - name: Extrair últimas mudanças do CHANGELOG
         id: changelog
         run: |
           if [ -f CHANGELOG.md ]; then
-            # Extrair as últimas 5 entradas do changelog
-            LATEST_CHANGES=$(sed -n '/^## \[/,/^## \[/p' CHANGELOG.md | head -n 30)
+            # Extrair as últimas 3 versões do changelog
+            LATEST_CHANGES=$(awk '/^## \[/{count++; if(count<=3) print; if(count>3) exit} /^## \[/,/^## \[/{if(count<=3) print}' CHANGELOG.md | head -n 50)
             echo "changes<<EOF" >> $GITHUB_OUTPUT
             echo "$LATEST_CHANGES" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           else
-            echo "changes=Sem mudanças registradas ainda." >> $GITHUB_OUTPUT
+            echo "changes=### Sem changelog disponível ainda." >> $GITHUB_OUTPUT
           fi
+      
+      - name: Obter últimas features implementadas
+        id: features
+        run: |
+          # Buscar últimos commits do tipo feat
+          FEATURES=$(git log --oneline --grep="^feat" -10 --pretty=format:"- %s (%h)" | head -n 10)
+          if [ -z "$FEATURES" ]; then
+            FEATURES="- Nenhuma feature nova registrada"
+          fi
+          echo "list<<EOF" >> $GITHUB_OUTPUT
+          echo "$FEATURES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       
       - name: Atualizar README.md
         run: |
           # Criar seção de changelog no README se não existir
           if ! grep -q "## 📝 Changelog" README.md; then
-            echo "" >> README.md
-            echo "## 📝 Changelog" >> README.md
-            echo "" >> README.md
-            echo "### Últimas Mudanças" >> README.md
-            echo "" >> README.md
-            echo '${{ steps.changelog.outputs.changes }}' >> README.md
-            echo "" >> README.md
-            echo "Para ver o changelog completo, consulte [CHANGELOG.md](CHANGELOG.md)" >> README.md
+            # Adicionar antes da seção de Contato ou no final
+            if grep -q "## 📞 Contato" README.md; then
+              sed -i '/## 📞 Contato/i\\n## 📝 Changelog\n\n### Últimas Mudanças\n\n${{ steps.changelog.outputs.changes }}\n\n### Últimas Features\n\n${{ steps.features.outputs.list }}\n\n---\n\n📋 **Última atualização**: ${{ steps.commit_info.outputs.date }} por ${{ steps.commit_info.outputs.author }}\n\n💡 Para ver o changelog completo, consulte [CHANGELOG.md](CHANGELOG.md)\n\n' README.md
+            else
+              echo "" >> README.md
+              echo "## 📝 Changelog" >> README.md
+              echo "" >> README.md
+              echo "### Últimas Mudanças" >> README.md
+              echo "" >> README.md
+              echo '${{ steps.changelog.outputs.changes }}' >> README.md
+              echo "" >> README.md
+              echo "### Últimas Features" >> README.md
+              echo "" >> README.md
+              echo '${{ steps.features.outputs.list }}' >> README.md
+              echo "" >> README.md
+              echo "---" >> README.md
+              echo "" >> README.md
+              echo "📋 **Última atualização**: ${{ steps.commit_info.outputs.date }} por ${{ steps.commit_info.outputs.author }}" >> README.md
+              echo "" >> README.md
+              echo "💡 Para ver o changelog completo, consulte [CHANGELOG.md](CHANGELOG.md)" >> README.md
+            fi
           else
             # Atualizar seção existente
-            # Remover seção antiga
-            sed -i '/## 📝 Changelog/,/^## /{ /^## 📝 Changelog/!{ /^## /!d; }; }' README.md
-            
-            # Adicionar nova seção
-            sed -i '/## 📝 Changelog/a\\n### Últimas Mudanças\n\n${{ steps.changelog.outputs.changes }}\n\nPara ver o changelog completo, consulte [CHANGELOG.md](CHANGELOG.md)\n' README.md
+            # Criar arquivo temporário com novo conteúdo
+            cat > /tmp/changelog_section.md << 'EOF'
+## 📝 Changelog
+
+### Últimas Mudanças
+
+${{ steps.changelog.outputs.changes }}
+
+### Últimas Features
+
+${{ steps.features.outputs.list }}
+
+---
+
+📋 **Última atualização**: ${{ steps.commit_info.outputs.date }} por ${{ steps.commit_info.outputs.author }}
+
+💡 Para ver o changelog completo, consulte [CHANGELOG.md](CHANGELOG.md)
+
+EOF
+            # Substituir seção existente
+            python3 << 'PYTHON'
+import re
+
+with open('README.md', 'r', encoding='utf-8') as f:
+    content = f.read()
+
+# Remover seção antiga de changelog
+pattern = r'## 📝 Changelog.*?(?=\n## |$)'
+content = re.sub(pattern, '', content, flags=re.DOTALL)
+
+# Ler novo conteúdo
+with open('/tmp/changelog_section.md', 'r', encoding='utf-8') as f:
+    new_section = f.read()
+
+# Substituir variáveis
+import os
+new_section = new_section.replace('${{ steps.changelog.outputs.changes }}', os.environ.get('CHANGELOG_CONTENT', ''))
+new_section = new_section.replace('${{ steps.features.outputs.list }}', os.environ.get('FEATURES_LIST', ''))
+new_section = new_section.replace('${{ steps.commit_info.outputs.date }}', os.environ.get('COMMIT_DATE', ''))
+new_section = new_section.replace('${{ steps.commit_info.outputs.author }}', os.environ.get('COMMIT_AUTHOR', ''))
+
+# Inserir antes de Contato ou no final
+if '## 📞 Contato' in content:
+    content = content.replace('## 📞 Contato', new_section + '\n\n## 📞 Contato')
+else:
+    content += '\n\n' + new_section
+
+with open('README.md', 'w', encoding='utf-8') as f:
+    f.write(content)
+PYTHON
           fi
       
-      - name: Commit mudanças
+      - name: Commit mudanças no README
+        env:
+          CHANGELOG_CONTENT: ${{ steps.changelog.outputs.changes }}
+          FEATURES_LIST: ${{ steps.features.outputs.list }}
+          COMMIT_DATE: ${{ steps.commit_info.outputs.date }}
+          COMMIT_AUTHOR: ${{ steps.commit_info.outputs.author }}
         run: |
           git add README.md
-          git diff --staged --quiet || git commit -m "docs(readme): atualizar changelog no README [skip release]"
-          git push || echo "Nenhuma mudança para fazer commit"
-
+          if ! git diff --staged --quiet; then
+            git commit -m "docs(readme): atualizar changelog automaticamente [skip release]"
+            git push
+          else
+            echo "Nenhuma mudança no README para fazer commit"
+          fi
