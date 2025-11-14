@@ -1,0 +1,146 @@
+name: 🚀 Release Automático
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+      - 'docs/**'
+
+jobs:
+  release:
+    name: Criar Release
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip release]')"
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configurar Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Verificar se há mudanças
+        id: changes
+        run: |
+          if git diff --quiet HEAD~1 HEAD -- . ':!*.md' ':!.github/**' ':!docs/**'; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Obter última tag
+        id: last_tag
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$LAST_TAG" >> $GITHUB_OUTPUT
+          echo "Última tag: $LAST_TAG"
+      
+      - name: Calcular nova versão
+        id: version
+        run: |
+          LAST_TAG=${{ steps.last_tag.outputs.tag }}
+          VERSION=${LAST_TAG#v}
+          
+          # Extrair major, minor, patch
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          
+          # Verificar tipo de commit (usando Conventional Commits)
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          
+          if echo "$COMMIT_MSG" | grep -qE "^feat(\(.+\))?:"; then
+            # Feature: incrementa minor
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            BUMP_TYPE="minor"
+          elif echo "$COMMIT_MSG" | grep -qE "^(fix|bugfix)(\(.+\))?:"; then
+            # Bugfix: incrementa patch
+            PATCH=$((PATCH + 1))
+            BUMP_TYPE="patch"
+          else
+            # Outros: incrementa patch
+            PATCH=$((PATCH + 1))
+            BUMP_TYPE="patch"
+          fi
+          
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          NEW_TAG="v$NEW_VERSION"
+          
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "Nova versão: $NEW_TAG"
+      
+      - name: Criar tag
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+      
+      - name: Criar release via API
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMITS=$(git log ${{ steps.last_tag.outputs.tag }}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          
+          BODY=$(cat <<EOF
+          ## 🎉 Release ${{ steps.version.outputs.tag }}
+          
+          ### 📝 Mudanças
+          
+          ${{ github.event.head_commit.message }}
+          
+          ### 📦 Tipo de Release
+          - **Tipo**: ${{ steps.version.outputs.bump_type }}
+          - **Versão Anterior**: ${{ steps.last_tag.outputs.tag }}
+          - **Nova Versão**: ${{ steps.version.outputs.tag }}
+          
+          ### 📋 Commits Incluídos
+          
+          $COMMITS
+          
+          ---
+          
+          **Gerado automaticamente pelo GitHub Actions**
+          EOF
+          )
+          
+          curl -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d "{\"tag_name\":\"${{ steps.version.outputs.tag }}\",\"name\":\"Release ${{ steps.version.outputs.tag }}\",\"body\":$(echo "$BODY" | jq -Rs .),\"draft\":false,\"prerelease\":false}"
+      
+      - name: Atualizar CHANGELOG.md
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          NEW_TAG="${{ steps.version.outputs.tag }}"
+          DATE=$(date +"%Y-%m-%d")
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          
+          # Criar ou atualizar CHANGELOG.md
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "Todas as mudanças notáveis neste projeto serão documentadas neste arquivo." >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/)," >> CHANGELOG.md
+            echo "e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/)." >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+          fi
+          
+          # Adicionar nova entrada no topo
+          sed -i "1i\\\n## [$NEW_TAG] - $DATE\n\n### $COMMIT_MSG\n" CHANGELOG.md
+          
+          git add CHANGELOG.md
+          git commit -m "docs(changelog): atualizar changelog para $NEW_TAG" || exit 0
+          git push
+
