@@ -28,7 +28,7 @@ export function GalleryPage(): React.JSX.Element {
             style={{
               fontSize: '2.5rem',
               fontWeight: '700',
-              color: '#333',
+              color: 'var(--color-text-primary)',
               marginBottom: '0.5rem',
             }}
           >
@@ -37,7 +37,7 @@ export function GalleryPage(): React.JSX.Element {
           <p
             style={{
               fontSize: '1.1rem',
-              color: '#666',
+              color: 'var(--color-text-secondary)',
             }}
           >
             Explore os modelos 3D gerados pela comunidade
@@ -48,9 +48,9 @@ export function GalleryPage(): React.JSX.Element {
           style={{
             textAlign: 'center',
             padding: '4rem 2rem',
-            backgroundColor: '#fff',
+            backgroundColor: 'var(--color-bg-primary)',
             borderRadius: '12px',
-            border: '2px dashed #ddd',
+            border: `2px dashed var(--color-bg-tertiary)`,
           }}
         >
           <div
@@ -65,7 +65,7 @@ export function GalleryPage(): React.JSX.Element {
             style={{
               fontSize: '1.5rem',
               fontWeight: '600',
-              color: '#333',
+              color: 'var(--color-text-primary)',
               marginBottom: '0.5rem',
             }}
           >
@@ -73,7 +73,7 @@ export function GalleryPage(): React.JSX.Element {
           </h2>
           <p
             style={{
-              color: '#666',
+              color: 'var(--color-text-secondary)',
               marginBottom: '2rem',
             }}
           >

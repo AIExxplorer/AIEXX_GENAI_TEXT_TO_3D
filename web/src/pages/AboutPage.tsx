@@ -28,7 +28,7 @@ export function AboutPage(): React.JSX.Element {
             style={{
               fontSize: '2.5rem',
               fontWeight: '700',
-              color: '#333',
+              color: 'var(--color-text-primary)',
               marginBottom: '0.5rem',
             }}
           >
@@ -38,10 +38,10 @@ export function AboutPage(): React.JSX.Element {
 
         <div
           style={{
-            backgroundColor: '#fff',
+            backgroundColor: 'var(--color-bg-primary)',
             padding: '3rem',
             borderRadius: '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <section style={{ marginBottom: '2rem' }}>
@@ -49,7 +49,7 @@ export function AboutPage(): React.JSX.Element {
               style={{
                 fontSize: '1.8rem',
                 fontWeight: '600',
-                color: '#333',
+                color: 'var(--color-text-primary)',
                 marginBottom: '1rem',
               }}
             >
@@ -57,7 +57,7 @@ export function AboutPage(): React.JSX.Element {
             </h2>
             <p
               style={{
-                color: '#666',
+                color: 'var(--color-text-secondary)',
                 lineHeight: '1.8',
                 marginBottom: '1rem',
               }}
@@ -66,7 +66,7 @@ export function AboutPage(): React.JSX.Element {
             </p>
             <p
               style={{
-                color: '#666',
+                color: 'var(--color-text-secondary)',
                 lineHeight: '1.8',
               }}
             >
@@ -79,7 +79,7 @@ export function AboutPage(): React.JSX.Element {
               style={{
                 fontSize: '1.8rem',
                 fontWeight: '600',
-                color: '#333',
+                color: 'var(--color-text-primary)',
                 marginBottom: '1rem',
               }}
             >
@@ -98,11 +98,11 @@ export function AboutPage(): React.JSX.Element {
                     key={tech}
                     style={{
                       padding: '1rem',
-                      backgroundColor: '#f5f5f5',
+                      backgroundColor: 'var(--color-bg-secondary)',
                       borderRadius: '8px',
                       textAlign: 'center',
                       fontWeight: '600',
-                      color: '#333',
+                      color: 'var(--color-text-primary)',
                     }}
                   >
                     {tech}
@@ -117,7 +117,7 @@ export function AboutPage(): React.JSX.Element {
               style={{
                 fontSize: '1.8rem',
                 fontWeight: '600',
-                color: '#333',
+                color: 'var(--color-text-primary)',
                 marginBottom: '1rem',
               }}
             >
@@ -125,7 +125,7 @@ export function AboutPage(): React.JSX.Element {
             </h2>
             <ul
               style={{
-                color: '#666',
+                color: 'var(--color-text-secondary)',
                 lineHeight: '2',
                 paddingLeft: '1.5rem',
               }}

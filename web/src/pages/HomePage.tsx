@@ -30,7 +30,7 @@ export function HomePage(): React.JSX.Element {
             style={{
               fontSize: '3.5rem',
               fontWeight: '800',
-              color: '#333',
+              color: 'var(--color-text-primary)',
               marginBottom: '1rem',
               lineHeight: '1.2',
             }}
@@ -40,7 +40,7 @@ export function HomePage(): React.JSX.Element {
           <p
             style={{
               fontSize: '1.5rem',
-              color: '#666',
+              color: 'var(--color-text-secondary)',
               marginBottom: '2rem',
               maxWidth: '700px',
               margin: '0 auto 2rem',
@@ -61,24 +61,22 @@ export function HomePage(): React.JSX.Element {
               to="/generate"
               style={{
                 padding: '1rem 2.5rem',
-                backgroundColor: '#007bff',
+                backgroundColor: 'var(--color-primary)',
                 color: '#fff',
                 textDecoration: 'none',
                 borderRadius: '8px',
                 fontSize: '1.1rem',
                 fontWeight: '600',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 4px 6px rgba(0, 123, 255, 0.3)',
+                transition: 'all var(--transition-fast)',
+                boxShadow: 'var(--shadow-md)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#0056b3';
+                e.currentTarget.style.opacity = '0.9';
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 123, 255, 0.4)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#007bff';
+                e.currentTarget.style.opacity = '1';
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 123, 255, 0.3)';
               }}
             >
               🚀 Começar Agora
@@ -87,20 +85,20 @@ export function HomePage(): React.JSX.Element {
               to="/gallery"
               style={{
                 padding: '1rem 2.5rem',
-                backgroundColor: '#fff',
-                color: '#007bff',
+                backgroundColor: 'var(--color-bg-primary)',
+                color: 'var(--color-primary)',
                 textDecoration: 'none',
                 borderRadius: '8px',
                 fontSize: '1.1rem',
                 fontWeight: '600',
-                border: '2px solid #007bff',
-                transition: 'all 0.2s ease',
+                border: `2px solid var(--color-primary)`,
+                transition: 'all var(--transition-fast)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f0f8ff';
+                e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#fff';
+                e.currentTarget.style.backgroundColor = 'var(--color-bg-primary)';
               }}
             >
               🖼️ Ver Galeria
@@ -119,7 +117,7 @@ export function HomePage(): React.JSX.Element {
               fontSize: '2.5rem',
               fontWeight: '700',
               textAlign: 'center',
-              color: '#333',
+              color: 'var(--color-text-primary)',
               marginBottom: '3rem',
             }}
           >
@@ -167,19 +165,19 @@ export function HomePage(): React.JSX.Element {
               <div
                 key={index}
                 style={{
-                  backgroundColor: '#fff',
+                  backgroundColor: 'var(--color-bg-primary)',
                   padding: '2rem',
                   borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  transition: 'all 0.2s ease',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'all var(--transition-fast)',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
                 }}
               >
                 <div
@@ -194,7 +192,7 @@ export function HomePage(): React.JSX.Element {
                   style={{
                     fontSize: '1.5rem',
                     fontWeight: '600',
-                    color: '#333',
+                    color: 'var(--color-text-primary)',
                     marginBottom: '0.75rem',
                   }}
                 >
@@ -202,7 +200,7 @@ export function HomePage(): React.JSX.Element {
                 </h3>
                 <p
                   style={{
-                    color: '#666',
+                    color: 'var(--color-text-secondary)',
                     lineHeight: '1.6',
                   }}
                 >
@@ -216,7 +214,7 @@ export function HomePage(): React.JSX.Element {
         {/* How It Works Section */}
         <section
           style={{
-            backgroundColor: '#fff',
+            backgroundColor: 'var(--color-bg-primary)',
             padding: '3rem',
             borderRadius: '12px',
             marginBottom: '4rem',
@@ -227,7 +225,7 @@ export function HomePage(): React.JSX.Element {
               fontSize: '2.5rem',
               fontWeight: '700',
               textAlign: 'center',
-              color: '#333',
+              color: 'var(--color-text-primary)',
               marginBottom: '3rem',
             }}
           >
