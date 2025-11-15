@@ -18,6 +18,7 @@ export default defineConfig({
       '@api': path.resolve(__dirname, './src/api'),
       '@utils': path.resolve(__dirname, './src/utils'),
       '@types': path.resolve(__dirname, './src/types'),
+      '@aiexx/viewer3d': path.resolve(__dirname, '../viewer3d/src'),
     },
   },
   
