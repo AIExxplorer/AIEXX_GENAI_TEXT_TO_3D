@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { Layout } from '../components/Layout';
 import { PromptInput } from '../components/PromptInput';
 import { ModelViewer } from '../components/ModelViewer';
 import { GenerationStatus } from '../components/GenerationStatus';
@@ -19,19 +20,19 @@ export function GenerationPage(): React.JSX.Element {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: '#f5f5f5',
-        padding: '2rem',
-      }}
-    >
+    <Layout>
       <div
         style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
+          backgroundColor: '#f5f5f5',
+          padding: '2rem',
         }}
       >
+        <div
+          style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+          }}
+        >
         {/* Header */}
         <header
           style={{
@@ -130,7 +131,7 @@ export function GenerationPage(): React.JSX.Element {
           </section>
         )}
       </div>
-    </div>
+    </Layout>
   );
 }
 
