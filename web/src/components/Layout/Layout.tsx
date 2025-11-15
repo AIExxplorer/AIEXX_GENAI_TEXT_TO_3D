@@ -37,11 +37,11 @@ export function Layout({ children, showFooter = true }: LayoutProps): React.JSX.
       {showFooter && (
         <footer
           style={{
-            backgroundColor: '#fff',
-            borderTop: '1px solid #e0e0e0',
+            backgroundColor: 'var(--color-bg-primary)',
+            borderTop: '1px solid var(--color-bg-tertiary)',
             padding: '2rem',
             textAlign: 'center',
-            color: '#999',
+            color: 'var(--color-text-tertiary)',
             marginTop: 'auto',
           }}
         >
@@ -51,7 +51,17 @@ export function Layout({ children, showFooter = true }: LayoutProps): React.JSX.
               href="https://github.com/AIExxplorer"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#007bff', textDecoration: 'none' }}
+              style={{ 
+                color: 'var(--color-primary)', 
+                textDecoration: 'none',
+                transition: 'opacity var(--transition-fast)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
             >
               AIEXX
             </a>

@@ -72,7 +72,7 @@ export function GenerationStatus({
       style={{
         padding: '1rem',
         borderRadius: '8px',
-        backgroundColor: '#fff',
+        backgroundColor: 'var(--color-bg-primary)',
         border: `2px solid ${config.color}`,
         display: 'flex',
         alignItems: 'center',
@@ -104,7 +104,7 @@ export function GenerationStatus({
         <div
           style={{
             fontSize: '0.875rem',
-            color: '#666',
+            color: 'var(--color-text-secondary)',
           }}
         >
           {config.message}
@@ -113,7 +113,7 @@ export function GenerationStatus({
           <div
             style={{
               fontSize: '0.75rem',
-              color: '#999',
+              color: 'var(--color-text-tertiary)',
               marginTop: '0.5rem',
             }}
           >

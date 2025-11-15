@@ -42,9 +42,9 @@ export function ModelViewer({
         width: '100%',
         height: typeof height === 'number' ? `${height}px` : height,
         position: 'relative',
-        backgroundColor: '#f8f9fa',
+        backgroundColor: 'var(--color-bg-secondary)',
         borderRadius: '12px',
-        border: '2px solid #e0e0e0',
+        border: `2px solid var(--color-bg-tertiary)`,
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
@@ -56,7 +56,7 @@ export function ModelViewer({
           style={{
             textAlign: 'center',
             padding: '3rem',
-            color: '#999',
+            color: 'var(--color-text-tertiary)',
           }}
         >
           <div
@@ -71,7 +71,7 @@ export function ModelViewer({
             style={{
               fontSize: '1.5rem',
               fontWeight: '600',
-              color: '#666',
+              color: 'var(--color-text-secondary)',
               marginBottom: '0.5rem',
             }}
           >
@@ -80,7 +80,7 @@ export function ModelViewer({
           <p
             style={{
               fontSize: '1rem',
-              color: '#999',
+              color: 'var(--color-text-tertiary)',
               maxWidth: '400px',
               margin: '0 auto',
             }}
@@ -95,7 +95,7 @@ export function ModelViewer({
           style={{
             textAlign: 'center',
             padding: '3rem',
-            color: '#007bff',
+            color: 'var(--color-primary)',
           }}
         >
           <div
@@ -111,7 +111,7 @@ export function ModelViewer({
             style={{
               fontSize: '1.5rem',
               fontWeight: '600',
-              color: '#333',
+              color: 'var(--color-text-primary)',
               marginBottom: '0.5rem',
             }}
           >
@@ -120,7 +120,7 @@ export function ModelViewer({
           <p
             style={{
               fontSize: '1rem',
-              color: '#666',
+              color: 'var(--color-text-secondary)',
             }}
           >
             Aguarde enquanto processamos seu prompt e geramos o modelo.
@@ -133,7 +133,7 @@ export function ModelViewer({
           style={{
             textAlign: 'center',
             padding: '3rem',
-            color: '#dc3545',
+            color: 'var(--color-error)',
           }}
         >
           <div
@@ -148,7 +148,7 @@ export function ModelViewer({
             style={{
               fontSize: '1.5rem',
               fontWeight: '600',
-              color: '#dc3545',
+              color: 'var(--color-error)',
               marginBottom: '0.5rem',
             }}
           >
@@ -157,7 +157,7 @@ export function ModelViewer({
           <p
             style={{
               fontSize: '1rem',
-              color: '#666',
+              color: 'var(--color-text-secondary)',
             }}
           >
             {error}

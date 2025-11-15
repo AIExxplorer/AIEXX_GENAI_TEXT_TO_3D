@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ThemeToggle } from '../ThemeToggle';
 
 export interface NavigationProps {
   /** Classe CSS adicional */
@@ -31,12 +32,13 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
     <nav
       className={`navigation ${className}`}
       style={{
-        backgroundColor: '#fff',
-        borderBottom: '2px solid #e0e0e0',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        backgroundColor: 'var(--color-bg-primary)',
+        borderBottom: '2px solid var(--color-bg-tertiary)',
+        boxShadow: 'var(--shadow-sm)',
         position: 'sticky',
         top: 0,
         zIndex: 1000,
+        backdropFilter: 'blur(10px)',
       }}
     >
       <div
@@ -58,9 +60,16 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
             alignItems: 'center',
             gap: '0.75rem',
             textDecoration: 'none',
-            color: '#333',
+            color: 'var(--color-text-primary)',
             fontWeight: '700',
             fontSize: '1.5rem',
+            transition: 'opacity var(--transition-fast)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '0.8';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '1';
           }}
         >
           <span style={{ fontSize: '2rem' }}>🎨</span>
@@ -82,24 +91,26 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
               style={{
                 padding: '0.75rem 1.25rem',
                 textDecoration: 'none',
-                color: isActive(item.path) ? '#007bff' : '#666',
+                color: isActive(item.path) ? 'var(--color-primary)' : 'var(--color-text-secondary)',
                 fontWeight: isActive(item.path) ? '600' : '400',
                 borderRadius: '8px',
-                transition: 'all 0.2s ease',
-                backgroundColor: isActive(item.path) ? '#e7f3ff' : 'transparent',
-                borderBottom: isActive(item.path) ? '3px solid #007bff' : '3px solid transparent',
+                transition: 'all var(--transition-fast)',
+                backgroundColor: isActive(item.path) ? 'var(--color-bg-secondary)' : 'transparent',
+                borderBottom: isActive(item.path) ? `3px solid var(--color-primary)` : '3px solid transparent',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
               }}
               onMouseEnter={(e) => {
                 if (!isActive(item.path)) {
-                  e.currentTarget.style.backgroundColor = '#f5f5f5';
+                  e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)';
+                  e.currentTarget.style.color = 'var(--color-text-primary)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive(item.path)) {
                   e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--color-text-secondary)';
                 }
               }}
             >
@@ -107,6 +118,9 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
               <span>{item.label}</span>
             </Link>
           ))}
+          
+          {/* Theme Toggle */}
+          <ThemeToggle />
         </div>
       </div>
     </nav>

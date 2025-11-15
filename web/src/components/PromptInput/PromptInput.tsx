@@ -51,10 +51,10 @@ export function PromptInput({
           position: 'relative',
           width: '100%',
           borderRadius: '12px',
-          border: `2px solid ${isFocused ? '#007bff' : '#ddd'}`,
-          backgroundColor: disabled ? '#f5f5f5' : '#fff',
-          transition: 'all 0.2s ease',
-          boxShadow: isFocused ? '0 4px 12px rgba(0, 123, 255, 0.15)' : '0 2px 4px rgba(0,0,0,0.1)',
+          border: `2px solid ${isFocused ? 'var(--color-primary)' : 'var(--color-bg-tertiary)'}`,
+          backgroundColor: disabled ? 'var(--color-bg-secondary)' : 'var(--color-bg-primary)',
+          transition: 'all var(--transition-fast)',
+          boxShadow: isFocused ? 'var(--shadow-md)' : 'var(--shadow-sm)',
         }}
       >
         <textarea
@@ -76,7 +76,7 @@ export function PromptInput({
             fontFamily: 'inherit',
             lineHeight: '1.5',
             backgroundColor: 'transparent',
-            color: disabled ? '#999' : '#333',
+            color: disabled ? 'var(--color-text-tertiary)' : 'var(--color-text-primary)',
             minHeight: '100px',
             maxHeight: '300px',
           }}
@@ -84,18 +84,18 @@ export function PromptInput({
         <div
           style={{
             padding: '0.75rem 1rem',
-            borderTop: '1px solid #eee',
+            borderTop: `1px solid var(--color-bg-tertiary)`,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: '#fafafa',
+            backgroundColor: 'var(--color-bg-secondary)',
             borderRadius: '0 0 10px 10px',
           }}
         >
           <span
             style={{
               fontSize: '0.75rem',
-              color: '#999',
+              color: 'var(--color-text-tertiary)',
             }}
           >
             {prompt.length} caracteres • Pressione Ctrl+Enter para enviar
@@ -105,23 +105,23 @@ export function PromptInput({
             disabled={disabled || !prompt.trim()}
             style={{
               padding: '0.5rem 1.5rem',
-              backgroundColor: disabled || !prompt.trim() ? '#ccc' : '#007bff',
+              backgroundColor: disabled || !prompt.trim() ? 'var(--color-bg-tertiary)' : 'var(--color-primary)',
               color: '#fff',
               border: 'none',
               borderRadius: '6px',
               fontSize: '0.9rem',
               fontWeight: '600',
               cursor: disabled || !prompt.trim() ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s ease',
+              transition: 'all var(--transition-fast)',
             }}
             onMouseEnter={(e) => {
               if (!disabled && prompt.trim()) {
-                e.currentTarget.style.backgroundColor = '#0056b3';
+                e.currentTarget.style.opacity = '0.9';
               }
             }}
             onMouseLeave={(e) => {
               if (!disabled && prompt.trim()) {
-                e.currentTarget.style.backgroundColor = '#007bff';
+                e.currentTarget.style.opacity = '1';
               }
             }}
           >

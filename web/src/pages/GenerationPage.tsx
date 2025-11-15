@@ -23,8 +23,9 @@ export function GenerationPage(): React.JSX.Element {
     <Layout>
       <div
         style={{
-          backgroundColor: '#f5f5f5',
+          backgroundColor: 'var(--color-bg-secondary)',
           padding: '2rem',
+          minHeight: 'calc(100vh - 140px)',
         }}
       >
         <div
@@ -41,21 +42,21 @@ export function GenerationPage(): React.JSX.Element {
             }}
           >
             <h1
-              style={{
-                fontSize: '2.5rem',
-                fontWeight: '700',
-                color: '#333',
-                marginBottom: '0.5rem',
-              }}
-            >
-              🎨 Gerador de Modelos 3D
-            </h1>
-            <p
-              style={{
-                fontSize: '1.1rem',
-                color: '#666',
-              }}
-            >
+            style={{
+              fontSize: '2.5rem',
+              fontWeight: '700',
+              color: 'var(--color-text-primary)',
+              marginBottom: '0.5rem',
+            }}
+          >
+            🎨 Gerador de Modelos 3D
+          </h1>
+          <p
+            style={{
+              fontSize: '1.1rem',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
               Descreva o modelo 3D que deseja criar e deixe a IA fazer o trabalho
             </p>
           </header>
@@ -108,23 +109,23 @@ export function GenerationPage(): React.JSX.Element {
             >
               <button
                 onClick={reset}
-                style={{
-                  padding: '0.75rem 2rem',
-                  backgroundColor: '#6c757d',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#5a6268';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#6c757d';
-                }}
+              style={{
+                padding: '0.75rem 2rem',
+                backgroundColor: 'var(--color-bg-tertiary)',
+                color: 'var(--color-text-primary)',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
               >
                 Gerar Novo Modelo
               </button>
