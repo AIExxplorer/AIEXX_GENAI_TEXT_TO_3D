@@ -259,7 +259,7 @@ export function HomePage(): React.JSX.Element {
                     width: '50px',
                     height: '50px',
                     borderRadius: '50%',
-                    backgroundColor: '#007bff',
+                    backgroundColor: 'var(--color-primary)',
                     color: '#fff',
                     display: 'flex',
                     alignItems: 'center',
@@ -276,7 +276,7 @@ export function HomePage(): React.JSX.Element {
                     style={{
                       fontSize: '1.25rem',
                       fontWeight: '600',
-                      color: '#333',
+                      color: 'var(--color-text-primary)',
                       marginBottom: '0.5rem',
                     }}
                   >
@@ -284,7 +284,7 @@ export function HomePage(): React.JSX.Element {
                   </h3>
                   <p
                     style={{
-                      color: '#666',
+                      color: 'var(--color-text-secondary)',
                       lineHeight: '1.6',
                     }}
                   >
