@@ -4,7 +4,7 @@
 
 <tr>
 
-<td align="center">
+<td align="left">
 
 ```
    █████╗ ██╗███████╗██╗  ██╗██╗  ██╗
