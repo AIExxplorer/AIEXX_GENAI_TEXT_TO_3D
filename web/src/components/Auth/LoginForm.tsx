@@ -9,7 +9,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock } from 'lucide-react';
 
@@ -62,15 +61,8 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Entrar</CardTitle>
-        <CardDescription>
-          Entre com sua conta para continuar
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -139,8 +131,7 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
             </div>
           )}
         </form>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 

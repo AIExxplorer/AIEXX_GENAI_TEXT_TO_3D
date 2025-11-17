@@ -15,7 +15,7 @@ import { Upload, X, File, Loader2, CheckCircle2, Info, LogIn } from 'lucide-reac
 import * as OV from 'online-3d-viewer';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import { AuthDialog } from '@/components/Auth/AuthDialog';
+import { AuthSideMenu } from '@/components/Auth/AuthSideMenu';
 import { uploadFiles } from '@/lib/supabaseStorage';
 
 /**
@@ -797,11 +797,12 @@ export function ViewerPage(): React.JSX.Element {
         </ScrollArea>
       </div>
 
-      {/* Diálogo de Autenticação */}
-      <AuthDialog
+      {/* Side Menu de Autenticação */}
+      <AuthSideMenu
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}
         initialMode="login"
+        side="right"
       />
     </Layout>
   );

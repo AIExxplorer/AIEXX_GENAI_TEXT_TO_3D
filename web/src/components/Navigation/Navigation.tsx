@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '../ThemeToggle';
-import { AuthDialog } from '../Auth/AuthDialog';
+import { AuthSideMenu } from '../Auth/AuthSideMenu';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import {
@@ -143,11 +143,12 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
         </div>
       </div>
 
-      {/* Auth Dialog */}
-      <AuthDialog
+      {/* Auth Side Menu */}
+      <AuthSideMenu
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}
         initialMode="login"
+        side="right"
       />
     </nav>
   );
