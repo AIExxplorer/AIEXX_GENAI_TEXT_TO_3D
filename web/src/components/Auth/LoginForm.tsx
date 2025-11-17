@@ -81,7 +81,7 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 text-foreground placeholder:text-muted-foreground"
+                className="pl-10 text-main placeholder:text-muted-foreground"
                 required
                 disabled={authState.loading}
               />
@@ -100,7 +100,7 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 text-foreground placeholder:text-muted-foreground"
+                className="pl-10 text-main placeholder:text-muted-foreground"
                 required
                 disabled={authState.loading}
               />
