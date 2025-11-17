@@ -100,8 +100,9 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="Seu nome"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="pl-10 text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:text-muted-foreground"
                 disabled={authState.loading}
+                style={{ color: 'hsl(173 100% 42%)' }}
               />
             </div>
           </div>
@@ -118,9 +119,10 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:text-muted-foreground"
                 required
                 disabled={authState.loading}
+                style={{ color: 'hsl(173 100% 42%)' }}
               />
             </div>
           </div>
@@ -137,10 +139,11 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:text-muted-foreground"
                 required
                 disabled={authState.loading}
                 minLength={6}
+                style={{ color: 'hsl(173 100% 42%)' }}
               />
             </div>
             <p className="text-xs text-muted-foreground">
@@ -160,10 +163,11 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="pl-10 text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:text-muted-foreground"
                 required
                 disabled={authState.loading}
                 minLength={6}
+                style={{ color: 'hsl(173 100% 42%)' }}
               />
             </div>
           </div>
