@@ -1,0 +1,38 @@
+# Configuração do Supabase para Desenvolvimento Local
+# 
+# Este arquivo configura o Supabase CLI para desenvolvimento local
+# Para mais informações: https://supabase.com/docs/guides/cli
+
+[project]
+# ID do projeto Supabase (opcional, pode ser definido via variável de ambiente)
+# project_id = "grpxuporwqdyckkyhlcx"
+
+[auth]
+# Configurações de autenticação
+
+[auth.external.google]
+# Configuração do provedor Google OAuth
+# Para usar no desenvolvimento local, você precisa:
+# 1. Criar um projeto no Google Cloud Console: https://console.cloud.google.com
+# 2. Criar credenciais OAuth 2.0
+# 3. Adicionar a variável de ambiente SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET no seu .env.local
+# 4. Configurar o client_id abaixo
+
+enabled = true
+# Substitua <client-id> pelo seu Client ID do Google Cloud Console
+client_id = "<client-id>"
+# O secret será lido da variável de ambiente SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET)"
+skip_nonce_check = false
+
+# Para outros provedores OAuth, adicione configurações similares:
+# [auth.external.github]
+# enabled = false
+# client_id = ""
+# secret = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_SECRET)"
+
+# [auth.external.facebook]
+# enabled = false
+# client_id = ""
+# secret = "env(SUPABASE_AUTH_EXTERNAL_FACEBOOK_CLIENT_SECRET)"
+

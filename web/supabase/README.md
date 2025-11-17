@@ -123,10 +123,32 @@ SELECT public.cleanup_expired_files();
 - [Authentication](https://supabase.com/dashboard/project/grpxuporwqdyckkyhlcx/api?page=auth)
 - [Storage](https://supabase.com/dashboard/project/grpxuporwqdyckkyhlcx/storage/buckets)
 
+## 🔐 Autenticação Google (Desenvolvimento Local)
+
+Para configurar autenticação Google no desenvolvimento local:
+
+1. **Criar credenciais no Google Cloud Console**
+   - Acesse: https://console.cloud.google.com
+   - Crie um OAuth Client ID (tipo: Web application)
+   - Configure redirect URI: `http://localhost:54321/auth/v1/callback`
+
+2. **Configurar variável de ambiente**
+   - Adicione no `.env.local`:
+     ```env
+     SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET=seu_client_secret
+     ```
+
+3. **Configurar config.toml**
+   - Edite `web/supabase/config.toml`
+   - Configure o `client_id` e `secret` conforme exemplo no arquivo
+
+Para mais detalhes, consulte: `web/ENV_SETUP.md`
+
 ## ⚠️ Importante
 
-- **NUNCA** commite credenciais sensíveis (service_role key) no repositório
+- **NUNCA** commite credenciais sensíveis (service_role key, client secrets) no repositório
 - Use apenas a **anon key** no frontend
 - A **service_role key** deve ser usada apenas no backend e nunca exposta ao cliente
 - Mantenha as políticas RLS sempre habilitadas para segurança
+- O arquivo `config.toml` pode ser commitado, mas **NUNCA** inclua secrets diretamente nele
 

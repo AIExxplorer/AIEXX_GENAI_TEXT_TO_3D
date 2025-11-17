@@ -70,6 +70,29 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 # VITE_HUGGINGFACE_API_KEY=your_huggingface_api_key_here
 
 # ============================================
+# Supabase - Autenticação Google (Desenvolvimento Local)
+# ============================================
+# 
+# Para usar autenticação Google no desenvolvimento local com Supabase CLI:
+# 1. Crie um projeto no Google Cloud Console: https://console.cloud.google.com
+# 2. Vá em: APIs & Services > Credentials
+# 3. Clique em "Create Credentials" > "OAuth client ID"
+# 4. Configure:
+#    - Application type: Web application
+#    - Authorized redirect URIs: http://localhost:54321/auth/v1/callback
+# 5. Copie o "Client ID" e "Client Secret"
+# 6. Configure o Client ID no arquivo web/supabase/config.toml
+# 7. Adicione o Client Secret abaixo:
+#
+# ⚠️ ATENÇÃO: Esta variável é usada apenas para desenvolvimento local
+# ⚠️ NÃO será exposta ao cliente, mas NUNCA commite este arquivo
+# ============================================
+
+# Client Secret do Google OAuth (para desenvolvimento local)
+# Obtenha em: https://console.cloud.google.com/apis/credentials
+# SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+
+# ============================================
 # Configurações de Desenvolvimento
 # ============================================
 # Estas variáveis são definidas automaticamente pelo Vite
