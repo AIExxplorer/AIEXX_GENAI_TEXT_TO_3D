@@ -96,7 +96,7 @@ export function AuthSideMenu({
           <SheetTitle className="text-2xl font-bold text-foreground">
             {mode === 'login' ? 'Entrar' : 'Criar Conta'}
           </SheetTitle>
-          <SheetDescription className="text-base text-muted-foreground mt-2">
+          <SheetDescription className="text-base text-foreground/70 mt-2">
             {mode === 'login'
               ? 'Entre com sua conta para continuar'
               : 'Crie uma nova conta para começar'}

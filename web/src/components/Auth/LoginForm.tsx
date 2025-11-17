@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock } from 'lucide-react';
 
@@ -70,16 +71,23 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="email" className="text-foreground font-semibold">
+                Email
+              </Label>
+              <Badge variant="neutral" className="text-xs">
+                Email
+              </Badge>
+            </div>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60" />
               <Input
                 id="email"
                 type="email"
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10"
+                className="pl-10 text-foreground placeholder:text-muted-foreground"
                 required
                 disabled={authState.loading}
               />
@@ -87,16 +95,23 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="password" className="text-foreground font-semibold">
+                Senha
+              </Label>
+              <Badge variant="neutral" className="text-xs">
+                Senha
+              </Badge>
+            </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60" />
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10"
+                className="pl-10 text-foreground placeholder:text-muted-foreground"
                 required
                 disabled={authState.loading}
               />
@@ -119,12 +134,12 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           </Button>
 
           {onSwitchToSignUp && (
-            <div className="text-center text-sm">
-              <span className="text-muted-foreground">Não tem uma conta? </span>
+            <div className="text-center text-sm pt-2">
+              <span className="text-foreground/70">Não tem uma conta? </span>
               <button
                 type="button"
                 onClick={onSwitchToSignUp}
-                className="text-main hover:underline font-medium"
+                className="text-main hover:underline font-semibold transition-colors"
               >
                 Criar conta
               </button>
