@@ -1,8 +1,10 @@
 /**
- * Componente para exibir status da geração de modelo 3D
+ * Componente para exibir status da geração de modelo 3D usando Neobrutalism
  */
 
 import React from 'react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { cn } from '@/lib/utils';
 
 export interface GenerationStatusProps {
   /** Status da geração */
@@ -29,35 +31,31 @@ export function GenerationStatus({
       case 'pending':
         return {
           icon: '⏳',
-          color: '#ffc107',
           label: 'Pendente',
           message: message || 'Aguardando início da geração...',
         };
       case 'processing':
         return {
           icon: '⚙️',
-          color: '#007bff',
           label: 'Processando',
           message: message || 'Gerando modelo 3D...',
         };
       case 'completed':
         return {
           icon: '✅',
-          color: '#28a745',
           label: 'Concluído',
           message: message || 'Modelo gerado com sucesso!',
         };
       case 'failed':
         return {
           icon: '❌',
-          color: '#dc3545',
           label: 'Falhou',
           message: message || 'Erro ao gerar modelo.',
+          variant: 'destructive' as const,
         };
       default:
         return {
           icon: '❓',
-          color: '#6c757d',
           label: 'Desconhecido',
           message: message || 'Status desconhecido',
         };
@@ -67,61 +65,20 @@ export function GenerationStatus({
   const config = getStatusConfig();
 
   return (
-    <div
-      className={`generation-status ${className}`}
-      style={{
-        padding: '1rem',
-        borderRadius: '8px',
-        backgroundColor: 'var(--color-bg-primary)',
-        border: `2px solid ${config.color}`,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1rem',
-      }}
+    <Alert
+      variant={config.variant || 'default'}
+      className={cn('flex items-start gap-4', className)}
     >
-      <div
-        style={{
-          fontSize: '2rem',
-        }}
-      >
-        {config.icon}
-      </div>
-      <div
-        style={{
-          flex: 1,
-        }}
-      >
-        <div
-          style={{
-            fontSize: '1rem',
-            fontWeight: '600',
-            color: config.color,
-            marginBottom: '0.25rem',
-          }}
-        >
-          {config.label}
-        </div>
-        <div
-          style={{
-            fontSize: '0.875rem',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
-          {config.message}
-        </div>
+      <div className="text-2xl">{config.icon}</div>
+      <div className="flex-1">
+        <AlertTitle className="mb-1">{config.label}</AlertTitle>
+        <AlertDescription>{config.message}</AlertDescription>
         {estimatedTime && status === 'processing' && (
-          <div
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--color-text-tertiary)',
-              marginTop: '0.5rem',
-            }}
-          >
+          <AlertDescription className="mt-2 text-xs">
             Tempo estimado: {Math.ceil(estimatedTime)} segundos
-          </div>
+          </AlertDescription>
         )}
       </div>
-    </div>
+    </Alert>
   );
 }
-

@@ -4,6 +4,7 @@ import { HomePage } from './pages/HomePage';
 import { GenerationPage } from './pages/GenerationPage';
 import { GalleryPage } from './pages/GalleryPage';
 import { AboutPage } from './pages/AboutPage';
+import { ViewerPage } from './pages/ViewerPage';
 
 /**
  * Componente principal da aplicação
@@ -15,6 +16,7 @@ function App(): JSX.Element {
         <Route path="/" element={<HomePage />} />
         <Route path="/generate" element={<GenerationPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/viewer" element={<ViewerPage />} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
       <Analytics />

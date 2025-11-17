@@ -1,10 +1,14 @@
 /**
- * Componente Viewer 3D Principal - Ambiente limpo que carrega modelos após geração
+ * Componente Viewer 3D Principal - Ambiente limpo usando Neobrutalism
  */
 
 import React, { useEffect, useState } from 'react';
 import type { ModelInfo } from '@aiexx/viewer3d';
 import { Viewer3D } from '@aiexx/viewer3d';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface ModelViewerProps {
   /** Informações do modelo a ser exibido */
@@ -35,156 +39,54 @@ export function ModelViewer({
     setShowEmptyState(!model && !isLoading && !error);
   }, [model, isLoading, error]);
 
+  const viewerHeight = typeof height === 'number' ? `${height}px` : height;
+
   return (
-    <div
-      className={`model-viewer-container ${className}`}
-      style={{
-        width: '100%',
-        height: typeof height === 'number' ? `${height}px` : height,
-        position: 'relative',
-        backgroundColor: 'var(--color-bg-secondary)',
-        borderRadius: '12px',
-        border: `2px solid var(--color-bg-tertiary)`,
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+    <Card
+      className={cn('relative overflow-hidden', className)}
+      style={{ height: viewerHeight }}
     >
-      {showEmptyState && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '3rem',
-            color: 'var(--color-text-tertiary)',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '4rem',
-              marginBottom: '1rem',
-            }}
-          >
-            🎨
+      <CardContent className="h-full p-0">
+        {showEmptyState && (
+          <div className="flex h-full flex-col items-center justify-center p-12 text-center">
+            <div className="mb-4 text-6xl">🎨</div>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-2xl text-card-foreground">Ambiente de Visualização 3D</CardTitle>
+            </CardHeader>
+            <CardDescription className="max-w-md text-base text-muted-foreground">
+              Digite um prompt acima para gerar seu modelo 3D. O artefato gerado aparecerá aqui automaticamente.
+            </CardDescription>
           </div>
-          <h3
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: '600',
-              color: 'var(--color-text-secondary)',
-              marginBottom: '0.5rem',
-            }}
-          >
-            Ambiente de Visualização 3D
-          </h3>
-          <p
-            style={{
-              fontSize: '1rem',
-              color: 'var(--color-text-tertiary)',
-              maxWidth: '400px',
-              margin: '0 auto',
-            }}
-          >
-            Digite um prompt acima para gerar seu modelo 3D. O artefato gerado aparecerá aqui automaticamente.
-          </p>
-        </div>
-      )}
+        )}
 
-      {isLoading && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '3rem',
-            color: 'var(--color-primary)',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '3rem',
-              marginBottom: '1rem',
-              animation: 'spin 1s linear infinite',
-            }}
-          >
-            ⚙️
+        {isLoading && (
+          <div className="flex h-full flex-col items-center justify-center p-12 text-center">
+            <Loader2 className="mb-4 h-12 w-12 animate-spin text-primary" />
+            <CardHeader className="pb-2">
+              <CardTitle className="text-2xl text-card-foreground">Gerando Modelo 3D...</CardTitle>
+            </CardHeader>
+            <CardDescription className="text-base text-muted-foreground">
+              Aguarde enquanto processamos seu prompt e geramos o modelo.
+            </CardDescription>
           </div>
-          <h3
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: '600',
-              color: 'var(--color-text-primary)',
-              marginBottom: '0.5rem',
-            }}
-          >
-            Gerando Modelo 3D...
-          </h3>
-          <p
-            style={{
-              fontSize: '1rem',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            Aguarde enquanto processamos seu prompt e geramos o modelo.
-          </p>
-        </div>
-      )}
+        )}
 
-      {error && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '3rem',
-            color: 'var(--color-error)',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '3rem',
-              marginBottom: '1rem',
-            }}
-          >
-            ⚠️
+        {error && (
+          <div className="flex h-full flex-col items-center justify-center p-12">
+            <Alert variant="destructive" className="max-w-md">
+              <div className="mb-2 text-4xl">⚠️</div>
+              <AlertTitle className="text-xl">Erro ao Carregar Modelo</AlertTitle>
+              <AlertDescription className="mt-2">{error}</AlertDescription>
+            </Alert>
           </div>
-          <h3
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: '600',
-              color: 'var(--color-error)',
-              marginBottom: '0.5rem',
-            }}
-          >
-            Erro ao Carregar Modelo
-          </h3>
-          <p
-            style={{
-              fontSize: '1rem',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            {error}
-          </p>
-        </div>
-      )}
+        )}
 
-      {model && !isLoading && !error && (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-        >
-          <Viewer3D model={model} width="100%" height="100%" />
-        </div>
-      )}
-
-      <style>
-        {`
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-        `}
-      </style>
-    </div>
+        {model && !isLoading && !error && (
+          <div className="h-full w-full">
+            <Viewer3D model={model} width="100%" height="100%" />
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
-

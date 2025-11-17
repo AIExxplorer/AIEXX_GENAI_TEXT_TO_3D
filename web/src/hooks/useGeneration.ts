@@ -81,7 +81,18 @@ export function useGeneration(): UseGenerationReturn {
           }
         } catch (err) {
           console.error('Erro ao buscar modelo:', err);
-          setError('Erro ao carregar modelo gerado');
+          
+          let errorMessage = 'Erro ao carregar modelo gerado';
+          if (err instanceof Error) {
+            // Verificar se é erro de rede
+            if ((err as any).isNetworkError) {
+              errorMessage = err.message || 'Não foi possível conectar ao servidor. Verifique se a API está rodando.';
+            } else if (err.message) {
+              errorMessage = err.message;
+            }
+          }
+          
+          setError(errorMessage);
           setIsLoading(false);
         }
       } else if (statusResponse.status === 'failed') {
@@ -94,7 +105,18 @@ export function useGeneration(): UseGenerationReturn {
       }
     } catch (err) {
       console.error('Erro ao verificar status:', err);
-      setError('Erro ao verificar status da geração');
+      
+      let errorMessage = 'Erro ao verificar status da geração';
+      if (err instanceof Error) {
+        // Verificar se é erro de rede
+        if ((err as any).isNetworkError) {
+          errorMessage = err.message || 'Não foi possível conectar ao servidor. Verifique se a API está rodando.';
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+      }
+      
+      setError(errorMessage);
       setIsLoading(false);
       if (pollingInterval) {
         clearInterval(pollingInterval);
@@ -131,7 +153,18 @@ export function useGeneration(): UseGenerationReturn {
           await pollGenerationStatus(response.job_id);
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Erro ao gerar modelo';
+        let errorMessage = 'Erro ao gerar modelo';
+        
+        if (err instanceof Error) {
+          // Verificar se é erro de rede
+          if ((err as any).isNetworkError) {
+            errorMessage = err.message || 'Não foi possível conectar ao servidor. Verifique se a API está rodando.';
+          } else if (err.message) {
+            errorMessage = err.message;
+          }
+        }
+        
+        console.error('Erro ao gerar modelo:', err);
         setError(errorMessage);
         setIsLoading(false);
       }

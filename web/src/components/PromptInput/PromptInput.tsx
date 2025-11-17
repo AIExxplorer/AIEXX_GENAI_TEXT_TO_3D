@@ -1,8 +1,13 @@
 /**
- * Componente de input para prompt de geração de modelo 3D
+ * Componente de input para prompt de geração de modelo 3D usando Neobrutalism
  */
 
 import React, { useState } from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 export interface PromptInputProps {
   /** Valor inicial do prompt */
@@ -44,92 +49,35 @@ export function PromptInput({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`prompt-input-form ${className}`}>
-      <div
-        className={`prompt-input-container ${isFocused ? 'focused' : ''} ${disabled ? 'disabled' : ''}`}
-        style={{
-          position: 'relative',
-          width: '100%',
-          borderRadius: '12px',
-          border: `2px solid ${isFocused ? 'var(--color-primary)' : 'var(--color-bg-tertiary)'}`,
-          backgroundColor: disabled ? 'var(--color-bg-secondary)' : 'var(--color-bg-primary)',
-          transition: 'all var(--transition-fast)',
-          boxShadow: isFocused ? 'var(--shadow-md)' : 'var(--shadow-sm)',
-        }}
-      >
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-          placeholder={placeholder}
-          rows={4}
-          style={{
-            width: '100%',
-            padding: '1rem',
-            border: 'none',
-            outline: 'none',
-            resize: 'vertical',
-            fontSize: '1rem',
-            fontFamily: 'inherit',
-            lineHeight: '1.5',
-            backgroundColor: 'transparent',
-            color: disabled ? 'var(--color-text-tertiary)' : 'var(--color-text-primary)',
-            minHeight: '100px',
-            maxHeight: '300px',
-          }}
-        />
-        <div
-          style={{
-            padding: '0.75rem 1rem',
-            borderTop: `1px solid var(--color-bg-tertiary)`,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: 'var(--color-bg-secondary)',
-            borderRadius: '0 0 10px 10px',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--color-text-tertiary)',
-            }}
-          >
+    <form onSubmit={handleSubmit} className={className}>
+      <Card className={cn('transition-all', isFocused && 'ring-2 ring-primary')}>
+        <CardContent className="p-0">
+          <Textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            placeholder={placeholder}
+            rows={6}
+            className="min-h-[150px] resize-y border-0 border-b-2 rounded-none rounded-t-base"
+          />
+        </CardContent>
+        <CardFooter className="flex items-center justify-between border-t-2 bg-muted/30">
+          <Label className="text-xs text-muted-foreground font-normal">
             {prompt.length} caracteres • Pressione Ctrl+Enter para enviar
-          </span>
-          <button
+          </Label>
+          <Button
             type="submit"
             disabled={disabled || !prompt.trim()}
-            style={{
-              padding: '0.5rem 1.5rem',
-              backgroundColor: disabled || !prompt.trim() ? 'var(--color-bg-tertiary)' : 'var(--color-primary)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              cursor: disabled || !prompt.trim() ? 'not-allowed' : 'pointer',
-              transition: 'all var(--transition-fast)',
-            }}
-            onMouseEnter={(e) => {
-              if (!disabled && prompt.trim()) {
-                e.currentTarget.style.opacity = '0.9';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!disabled && prompt.trim()) {
-                e.currentTarget.style.opacity = '1';
-              }
-            }}
+            variant="default"
+            size="sm"
           >
             Gerar Modelo 3D
-          </button>
-        </div>
-      </div>
+          </Button>
+        </CardFooter>
+      </Card>
     </form>
   );
 }
-

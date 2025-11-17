@@ -1,5 +1,5 @@
 /**
- * Componente Layout - Layout comum com navegação
+ * Componente Layout - Layout comum com navegação usando Neobrutalism
  */
 
 import React from 'react';
@@ -17,56 +17,25 @@ export interface LayoutProps {
  */
 export function Layout({ children, showFooter = true }: LayoutProps): React.JSX.Element {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#f5f5f5',
-      }}
-    >
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
-      <main
-        style={{
-          flex: 1,
-          width: '100%',
-        }}
-      >
+      <main className="flex-1 w-full">
         {children}
       </main>
       {showFooter && (
-        <footer
-          style={{
-            backgroundColor: 'var(--color-bg-primary)',
-            borderTop: '1px solid var(--color-bg-tertiary)',
-            padding: '2rem',
-            textAlign: 'center',
-            color: 'var(--color-text-tertiary)',
-            marginTop: 'auto',
-          }}
-        >
-          <p>
+        <footer className="mt-auto border-t-2 border-border bg-card p-8 text-center text-foreground">
+          <p className="text-foreground/80">
             Desenvolvido com ❤️ por{' '}
             <a
               href="https://github.com/AIExxplorer"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ 
-                color: 'var(--color-primary)', 
-                textDecoration: 'none',
-                transition: 'opacity var(--transition-fast)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1';
-              }}
+              className="text-primary underline-offset-4 transition-opacity hover:opacity-80 hover:underline font-semibold"
             >
               AIEXX
             </a>
           </p>
-          <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
+          <p className="mt-2 text-sm text-foreground/70">
             © {new Date().getFullYear()} AIEXX GENAI TEXT_TO_3D. Todos os direitos reservados.
           </p>
         </footer>
@@ -74,4 +43,3 @@ export function Layout({ children, showFooter = true }: LayoutProps): React.JSX.
     </div>
   );
 }
-

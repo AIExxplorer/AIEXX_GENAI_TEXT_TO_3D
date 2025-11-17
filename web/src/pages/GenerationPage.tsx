@@ -1,5 +1,5 @@
 /**
- * Página principal de geração de modelos 3D
+ * Página principal de geração de modelos 3D usando componentes Neobrutalism
  */
 
 import React from 'react';
@@ -8,6 +8,9 @@ import { PromptInput } from '../components/PromptInput';
 import { ModelViewer } from '../components/ModelViewer';
 import { GenerationStatus } from '../components/GenerationStatus';
 import { useGeneration } from '../hooks/useGeneration';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 /**
  * Página GenerationPage - Interface principal para geração de modelos 3D
@@ -21,52 +24,21 @@ export function GenerationPage(): React.JSX.Element {
 
   return (
     <Layout>
-      <div
-        style={{
-          backgroundColor: 'var(--color-bg-secondary)',
-          padding: '2rem',
-          minHeight: 'calc(100vh - 140px)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-          }}
-        >
+      <div className="h-[calc(100vh-140px)]">
+        <ScrollArea className="h-full">
+          <div className="container mx-auto px-4 py-8">
           {/* Header */}
-          <header
-            style={{
-              textAlign: 'center',
-              marginBottom: '3rem',
-            }}
-          >
-            <h1
-            style={{
-              fontSize: '2.5rem',
-              fontWeight: '700',
-              color: 'var(--color-text-primary)',
-              marginBottom: '0.5rem',
-            }}
-          >
-            🎨 Gerador de Modelos 3D
-          </h1>
-          <p
-            style={{
-              fontSize: '1.1rem',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-              Descreva o modelo 3D que deseja criar e deixe a IA fazer o trabalho
-            </p>
-          </header>
+          <Card className="mb-8">
+            <CardHeader className="text-center">
+              <CardTitle className="text-4xl">🎨 Gerador de Modelos 3D</CardTitle>
+              <CardDescription className="text-lg">
+                Descreva o modelo 3D que deseja criar e deixe a IA fazer o trabalho
+              </CardDescription>
+            </CardHeader>
+          </Card>
 
           {/* Prompt Input */}
-          <section
-            style={{
-              marginBottom: '2rem',
-            }}
-          >
+          <section className="mb-6">
             <PromptInput
               onSubmit={handlePromptSubmit}
               disabled={isLoading}
@@ -76,11 +48,7 @@ export function GenerationPage(): React.JSX.Element {
 
           {/* Status */}
           {status && generation && (
-            <section
-              style={{
-                marginBottom: '2rem',
-              }}
-            >
+            <section className="mb-6">
               <GenerationStatus
                 status={status}
                 message={generation.prompt}
@@ -90,7 +58,7 @@ export function GenerationPage(): React.JSX.Element {
           )}
 
           {/* Model Viewer */}
-          <section>
+          <section className="mb-6">
             <ModelViewer
               model={model}
               isLoading={isLoading}
@@ -101,39 +69,15 @@ export function GenerationPage(): React.JSX.Element {
 
           {/* Reset Button */}
           {(model || error) && (
-            <section
-              style={{
-                marginTop: '2rem',
-                textAlign: 'center',
-              }}
-            >
-              <button
-                onClick={reset}
-              style={{
-                padding: '0.75rem 2rem',
-                backgroundColor: 'var(--color-bg-tertiary)',
-                color: 'var(--color-text-primary)',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1';
-              }}
-              >
+            <section className="mt-6 text-center">
+              <Button onClick={reset} variant="neutral" size="lg">
                 Gerar Novo Modelo
-              </button>
+              </Button>
             </section>
           )}
-        </div>
+          </div>
+        </ScrollArea>
       </div>
     </Layout>
   );
 }
-

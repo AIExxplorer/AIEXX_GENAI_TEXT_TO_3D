@@ -28,7 +28,12 @@ export function useTheme() {
   });
 
   useEffect(() => {
-    // Aplicar tema ao documento
+    // Aplicar tema ao documento (compatível com Tailwind CSS e shadcn/ui)
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
