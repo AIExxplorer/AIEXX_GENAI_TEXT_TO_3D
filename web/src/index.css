@@ -196,4 +196,11 @@
   .dark .bg-background {
     background-color: hsl(var(--card));
   }
+  
+  /* Placeholders em cinza */
+  input::placeholder,
+  textarea::placeholder {
+    color: hsl(0 0% 60%) !important;
+    opacity: 1;
+  }
 }

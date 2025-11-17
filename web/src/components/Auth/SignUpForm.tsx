@@ -100,7 +100,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="Seu nome"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="pl-10 !text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:!text-gray-500"
                 disabled={authState.loading}
                 style={{ color: 'hsl(173 100% 42%)' }}
               />
@@ -119,7 +119,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 !text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:!text-gray-500"
                 required
                 disabled={authState.loading}
                 style={{ color: 'hsl(173 100% 42%)' }}
@@ -139,7 +139,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 !text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:!text-gray-500"
                 required
                 disabled={authState.loading}
                 minLength={6}
@@ -163,7 +163,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="pl-10 !text-main placeholder:text-muted-foreground"
+                className="pl-10 !text-main placeholder:!text-gray-500"
                 required
                 disabled={authState.loading}
                 minLength={6}
