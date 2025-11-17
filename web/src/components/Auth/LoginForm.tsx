@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock } from 'lucide-react';
+import { GoogleSignInButton } from './GoogleSignInButton';
 
 /**
  * Props do componente LoginForm
@@ -34,10 +35,11 @@ interface LoginFormProps {
  * @returns JSX.Element
  */
 export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): React.JSX.Element {
-  const { signIn, authState } = useAuth();
+  const { signIn, signInWithGoogle, authState } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   /**
    * Manipula o envio do formulário
@@ -57,6 +59,26 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
       onSuccess?.();
     } else {
       setError(result.error || 'Erro ao fazer login');
+    }
+  };
+
+  /**
+   * Manipula o login com Google
+   */
+  const handleGoogleSignIn = async (): Promise<void> => {
+    setError(null);
+    setGoogleLoading(true);
+
+    try {
+      const result = await signInWithGoogle(window.location.origin);
+      if (!result.success) {
+        setError(result.error || 'Erro ao fazer login com Google');
+      }
+      // Se bem-sucedido, o redirecionamento será automático
+    } catch (err) {
+      setError('Erro ao fazer login com Google');
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -112,7 +134,7 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           <Button
             type="submit"
             className="w-full"
-            disabled={authState.loading}
+            disabled={authState.loading || googleLoading}
           >
             {authState.loading ? (
               <>
@@ -123,6 +145,21 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
               'Entrar'
             )}
           </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">ou</span>
+            </div>
+          </div>
+
+          <GoogleSignInButton
+            onClick={handleGoogleSignIn}
+            loading={googleLoading || authState.loading}
+            label="Continuar com Google"
+          />
 
           {onSwitchToSignUp && (
             <div className="text-center text-sm pt-2">

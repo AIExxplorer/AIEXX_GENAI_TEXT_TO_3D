@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock, User } from 'lucide-react';
+import { GoogleSignInButton } from './GoogleSignInButton';
 
 /**
  * Props do componente SignUpForm
@@ -34,12 +35,13 @@ interface SignUpFormProps {
  * @returns JSX.Element
  */
 export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): React.JSX.Element {
-  const { signUp, authState } = useAuth();
+  const { signUp, signInWithGoogle, authState } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   /**
    * Manipula o envio do formulário
@@ -73,6 +75,26 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
       onSuccess?.();
     } else {
       setError(result.error || 'Erro ao criar conta');
+    }
+  };
+
+  /**
+   * Manipula o login com Google
+   */
+  const handleGoogleSignIn = async (): Promise<void> => {
+    setError(null);
+    setGoogleLoading(true);
+
+    try {
+      const result = await signInWithGoogle(window.location.origin);
+      if (!result.success) {
+        setError(result.error || 'Erro ao fazer login com Google');
+      }
+      // Se bem-sucedido, o redirecionamento será automático
+    } catch (err) {
+      setError('Erro ao fazer login com Google');
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -175,7 +197,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
           <Button
             type="submit"
             className="w-full"
-            disabled={authState.loading}
+            disabled={authState.loading || googleLoading}
           >
             {authState.loading ? (
               <>
@@ -186,6 +208,21 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
               'Criar Conta'
             )}
           </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">ou</span>
+            </div>
+          </div>
+
+          <GoogleSignInButton
+            onClick={handleGoogleSignIn}
+            loading={googleLoading || authState.loading}
+            label="Continuar com Google"
+          />
 
           {onSwitchToLogin && (
             <div className="text-center text-sm pt-2">

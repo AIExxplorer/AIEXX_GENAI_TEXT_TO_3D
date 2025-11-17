@@ -47,6 +47,14 @@ export interface UseAuthReturn {
   signOut: () => Promise<{ success: boolean; error?: string }>;
 
   /**
+   * Realiza login com Google OAuth
+   * 
+   * @param redirectTo - URL de redirecionamento após login (opcional)
+   * @returns Promise com resultado da operação
+   */
+  signInWithGoogle: (redirectTo?: string) => Promise<{ success: boolean; error?: string }>;
+
+  /**
    * Verifica se o usuário está autenticado
    * 
    * @returns true se o usuário estiver autenticado, false caso contrário
@@ -231,6 +239,43 @@ export function useAuth(): UseAuthReturn {
   };
 
   /**
+   * Realiza login com Google OAuth
+   * 
+   * @see https://supabase.com/docs/guides/auth/social-login/auth-google
+   */
+  const signInWithGoogle = async (redirectTo?: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      updateAuthState({ loading: true, error: null });
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectTo || window.location.origin,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // O signInWithOAuth redireciona automaticamente para o Google
+      // Não precisamos atualizar o estado aqui, pois o onAuthStateChange cuidará disso
+      return { success: true };
+    } catch (error) {
+      const authError = error as AuthError;
+      updateAuthState({
+        loading: false,
+        error: authError.message,
+      });
+
+      return {
+        success: false,
+        error: authError.message,
+      };
+    }
+  };
+
+  /**
    * Verifica se o usuário está autenticado
    */
   const isAuthenticated = (): boolean => {
@@ -266,6 +311,7 @@ export function useAuth(): UseAuthReturn {
     signIn,
     signUp,
     signOut,
+    signInWithGoogle,
     isAuthenticated,
   };
 }
