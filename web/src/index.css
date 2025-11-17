@@ -1,130 +1,199 @@
 /**
- * Estilos globais da aplicação
+ * Estilos globais da aplicação com Tailwind CSS e Neobrutalism
  */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  /* Cores principais */
-  --color-primary: #0070f3;
-  --color-secondary: #7928ca;
-  --color-success: #17c964;
-  --color-warning: #f5a623;
-  --color-error: #e00;
+@theme {
+  /* Neobrutalism Teal Style Guide Colors - Seguindo guia oficial */
+  --color-background: hsl(170 82% 89%);
+  --color-foreground: hsl(0 0% 0%);
+  --color-card: hsl(170 82% 89%);
+  --color-card-foreground: hsl(0 0% 0%);
+  --color-popover: hsl(170 82% 89%);
+  --color-popover-foreground: hsl(0 0% 0%);
+  --color-primary: hsl(173 100% 42%);
+  --color-primary-foreground: hsl(0 0% 0%);
+  --color-secondary: hsl(173 100% 37%);
+  --color-secondary-foreground: hsl(0 0% 0%);
+  --color-muted: hsl(170 70% 85%);
+  --color-muted-foreground: hsl(0 0% 0%);
+  --color-accent: hsl(173 100% 42%);
+  --color-accent-foreground: hsl(0 0% 0%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-border: hsl(0 0% 0%);
+  --color-input: hsl(0 0% 0%);
+  --color-ring: hsl(173 100% 42%);
+  --radius: 0rem;
   
-  /* Cores de texto */
-  --color-text-primary: #000;
-  --color-text-secondary: #666;
-  --color-text-tertiary: #999;
+  /* Neobrutalism specific colors - Teal palette */
+  --color-main: hsl(173 100% 42%);
+  --color-main-foreground: hsl(0 0% 0%);
+  --color-secondary-background: hsl(0 0% 90%);
+  --shadow: 4px 4px 0px 0px hsl(0 0% 0%);
+  --box-shadow-x: -4px;
+  --box-shadow-y: -4px;
+  --reverse-box-shadow-x: 4px;
+  --reverse-box-shadow-y: 4px;
   
-  /* Cores de fundo */
-  --color-bg-primary: #fff;
-  --color-bg-secondary: #f5f5f5;
-  --color-bg-tertiary: #e5e5e5;
+  /* Marquee animations */
+  --animate-marquee: marquee 5s linear infinite;
+  --animate-marquee2: marquee2 5s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes marquee2 {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@layer base {
+  :root {
+    /* Neobrutalism Teal Style Guide - Light Mode - Valores oficiais */
+    --background: 170 82% 89%;
+    --foreground: 0 0% 0%;
+    --card: 170 82% 89%;
+    --card-foreground: 0 0% 0%;
+    --popover: 170 82% 89%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 173 100% 42%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 173 100% 37%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 170 70% 85%;
+    --muted-foreground: 0 0% 0%;
+    --accent: 173 100% 42%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 173 100% 42%;
+    --radius: 0rem;
+    
+    /* Neobrutalism specific - Teal palette */
+    --main: 173 100% 42%;
+    --main-foreground: 0 0% 0%;
+    --secondary-background: 0 0% 90%;
+    --shadow: 4px 4px 0px 0px hsl(0 0% 0%);
+    --box-shadow-x: -4px;
+    --box-shadow-y: -4px;
+    --reverse-box-shadow-x: 4px;
+    --reverse-box-shadow-y: 4px;
+  }
+
+  .dark {
+    /* Neobrutalism Teal Style Guide - Dark Mode - Valores oficiais */
+    --background: 182 40% 9%;
+    --foreground: 223.81 0% 90%;
+    --card: 182 40% 9%;
+    --card-foreground: 223.81 0% 90%;
+    --popover: 182 40% 9%;
+    --popover-foreground: 223.81 0% 90%;
+    --primary: 173 100% 37%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 173 100% 37%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 182 35% 15%;
+    --muted-foreground: 223.81 0% 80%;
+    --accent: 173 100% 37%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 173 100% 37%;
+    
+    /* Neobrutalism specific - Dark Mode - Teal palette */
+    --main: 173 100% 37%;
+    --main-foreground: 0 0% 0%;
+    --secondary-background: 223.81 0% 12%;
+    --shadow: 4px 4px 0px 0px hsl(0 0% 0%);
+    --box-shadow-x: -4px;
+    --box-shadow-y: -4px;
+    --reverse-box-shadow-x: 4px;
+    --reverse-box-shadow-y: 4px;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .bg-main {
+    background-color: hsl(var(--main));
+  }
   
-  /* Espaçamento */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
+  .text-main-foreground {
+    color: hsl(var(--main-foreground));
+  }
   
-  /* Bordas */
-  --border-radius-sm: 0.25rem;
-  --border-radius-md: 0.5rem;
-  --border-radius-lg: 1rem;
+  .bg-secondary-background {
+    background-color: hsl(var(--secondary-background));
+  }
   
-  /* Sombras */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  .shadow-shadow {
+    box-shadow: var(--shadow);
+  }
   
-  /* Transições */
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-}
-
-/* Tema Escuro */
-[data-theme='dark'] {
-  /* Cores principais */
-  --color-primary: #3b82f6;
-  --color-secondary: #a855f7;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
+  .translate-x-boxShadowX {
+    transform: translateX(var(--box-shadow-x));
+  }
   
-  /* Cores de texto */
-  --color-text-primary: #f5f5f5;
-  --color-text-secondary: #a3a3a3;
-  --color-text-tertiary: #737373;
+  .translate-y-boxShadowY {
+    transform: translateY(var(--box-shadow-y));
+  }
   
-  /* Cores de fundo */
-  --color-bg-primary: #1a1a1a;
-  --color-bg-secondary: #2a2a2a;
-  --color-bg-tertiary: #3a3a3a;
+  .translate-x-reverseBoxShadowX {
+    transform: translateX(var(--reverse-box-shadow-x));
+  }
   
-  /* Sombras ajustadas para tema escuro */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  .translate-y-reverseBoxShadowY {
+    transform: translateY(var(--reverse-box-shadow-y));
+  }
+  
+  .rounded-base {
+    border-radius: var(--radius);
+  }
+  
+  /* Melhorias de contraste para dark mode */
+  .dark .bg-secondary-background {
+    background-color: hsl(var(--secondary-background));
+  }
+  
+  .dark .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+  
+  /* Garantir que cards tenham bom contraste */
+  .dark .bg-background {
+    background-color: hsl(var(--card));
+  }
 }
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
-  line-height: 1.6;
-  transition: background-color var(--transition-normal), color var(--transition-normal);
-}
-
-/* Transições suaves para mudanças de tema */
-* {
-  transition: background-color var(--transition-normal), 
-              color var(--transition-normal),
-              border-color var(--transition-normal);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-header {
-  background-color: var(--color-bg-secondary);
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-bg-tertiary);
-}
-
-header h1 {
-  font-size: 2rem;
-  margin-bottom: var(--spacing-sm);
-}
-
-header p {
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-}
-
-main {
-  flex: 1;
-  padding: var(--spacing-xl);
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
