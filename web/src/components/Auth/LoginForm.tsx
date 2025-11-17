@@ -8,7 +8,6 @@ import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock } from 'lucide-react';
@@ -71,16 +70,11 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           )}
 
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="email" className="text-foreground font-semibold">
-                Email
-              </Label>
-              <Badge variant="neutral" className="text-xs">
-                Email
-              </Badge>
-            </div>
+            <Badge variant="neutral" className="text-xs font-semibold">
+              Email
+            </Badge>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
@@ -95,16 +89,11 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="password" className="text-foreground font-semibold">
-                Senha
-              </Label>
-              <Badge variant="neutral" className="text-xs">
-                Senha
-              </Badge>
-            </div>
+            <Badge variant="neutral" className="text-xs font-semibold">
+              Senha
+            </Badge>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
                 type="password"
@@ -135,7 +124,7 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
 
           {onSwitchToSignUp && (
             <div className="text-center text-sm pt-2">
-              <span className="text-foreground/70">Não tem uma conta? </span>
+              <span className="text-muted-foreground">Não tem uma conta? </span>
               <button
                 type="button"
                 onClick={onSwitchToSignUp}

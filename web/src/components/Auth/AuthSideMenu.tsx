@@ -17,6 +17,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { LoginForm, SignUpForm } from './index';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
+import { LogIn, UserPlus } from 'lucide-react';
 
 /**
  * Props do componente AuthSideMenu
@@ -93,10 +94,20 @@ export function AuthSideMenu({
       >
         {/* Header fixo */}
         <SheetHeader className="px-6 pt-6 pb-4 border-b-2 border-border bg-background shrink-0">
-          <SheetTitle className="text-2xl font-bold text-foreground">
-            {mode === 'login' ? 'Entrar' : 'Criar Conta'}
+          <SheetTitle className="text-2xl font-bold text-main flex items-center gap-2">
+            {mode === 'login' ? (
+              <>
+                <LogIn className="h-6 w-6" />
+                Entrar
+              </>
+            ) : (
+              <>
+                <UserPlus className="h-6 w-6" />
+                Criar Conta
+              </>
+            )}
           </SheetTitle>
-          <SheetDescription className="text-base text-foreground/70 mt-2">
+          <SheetDescription className="text-base text-muted-foreground mt-2">
             {mode === 'login'
               ? 'Entre com sua conta para continuar'
               : 'Crie uma nova conta para começar'}
