@@ -11,6 +11,8 @@ Interface web moderna para geração de modelos 3D a partir de texto usando IA g
 - **Axios** - Cliente HTTP
 - **Three.js** - Visualização 3D
 - **Zustand** - Gerenciamento de estado
+- **Tailwind CSS** - Framework CSS utility-first
+- **shadcn/ui** - Componentes UI reutilizáveis baseados em Radix UI
 
 ## 📦 Instalação
 
@@ -35,6 +37,8 @@ npm run dev
 
 # A aplicação estará disponível em: http://localhost:5173
 ```
+
+**⚠️ Importante:** Antes de iniciar o frontend, certifique-se de que o backend da API está rodando na porta 8000. Veja a seção [Iniciando o Backend](#-iniciando-o-backend) abaixo.
 
 ### Build
 
@@ -77,14 +81,47 @@ npm run format:check
 
 ### Variáveis de Ambiente
 
-Crie um arquivo `.env.local` (não será commitado):
+Crie um arquivo `.env.local` na raiz do diretório `web/` (não será commitado):
 
 ```env
+# URL base da API Backend (padrão: http://localhost:8000)
 VITE_API_URL=http://localhost:8000
-VITE_APP_NAME=AIEXX_GENAI_TEXT_TO_3D
+
+# Token de autenticação da API (opcional)
+# VITE_API_TOKEN=your_api_token_here
+
+# Configurações da aplicação (opcionais)
+VITE_APP_NAME=AIEXX GENAI TEXT_TO_3D
 VITE_APP_VERSION=1.0.0
 NODE_ENV=development
 ```
+
+### Iniciando o Backend
+
+Para que o frontend funcione corretamente, você precisa iniciar o backend da API primeiro:
+
+```bash
+# Na raiz do projeto, ative o ambiente virtual (se necessário)
+# Windows PowerShell:
+.\venv\Scripts\Activate.ps1
+
+# Linux/Mac:
+source venv/bin/activate
+
+# Inicie a API
+uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+
+# Ou use o script fornecido:
+# Windows:
+.\scripts\start-api.ps1
+
+# Linux/Mac:
+./scripts/start-api.sh
+```
+
+A API estará disponível em `http://localhost:8000` e a documentação Swagger em `http://localhost:8000/docs`.
+
+**Nota:** Se a API não estiver rodando, você verá uma mensagem de erro clara informando que não foi possível conectar ao servidor.
 
 ### Path Aliases
 
@@ -104,6 +141,52 @@ Aliases disponíveis:
 - `@api/` → `src/api/`
 - `@utils/` → `src/utils/`
 - `@types/` → `src/types/`
+- `@/lib` → `src/lib/`
+- `@/hooks` → `src/hooks/`
+
+### Tailwind CSS e shadcn/ui
+
+O projeto utiliza **Tailwind CSS** para estilização e **shadcn/ui** para componentes UI reutilizáveis.
+
+#### Adicionar componentes do shadcn/ui
+
+Para adicionar novos componentes do shadcn/ui, use o CLI:
+
+```bash
+# Instalar o CLI do shadcn/ui globalmente (se ainda não tiver)
+npm install -g shadcn-ui
+
+# Adicionar um componente específico
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add card
+npx shadcn-ui@latest add dialog
+```
+
+Ou adicione manualmente copiando os componentes de [shadcn/ui](https://ui.shadcn.com/docs/components).
+
+#### Usar componentes
+
+```typescript
+import { Button } from '@/components/ui/button';
+
+function MyComponent() {
+  return (
+    <Button variant="default" size="lg">
+      Clique aqui
+    </Button>
+  );
+}
+```
+
+#### Utilitários
+
+Use a função `cn()` para combinar classes CSS de forma segura:
+
+```typescript
+import { cn } from '@/lib/utils';
+
+<div className={cn('base-class', condition && 'conditional-class')} />
+```
 
 ## 📁 Estrutura do Projeto
 

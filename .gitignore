@@ -23,6 +23,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+# Exceção: manter lib do web/src
+!web/src/lib/
 parts/
 sdist/
 var/
@@ -205,6 +207,11 @@ jspm_packages/
 .env.*.local
 !.env.example
 
+# MCP (Model Context Protocol) credentials
+.mcp/
+mcp-config.json
+*.mcp.key
+
 # parcel-bundler cache
 .cache
 .parcel-cache
@@ -379,6 +386,11 @@ credentials.json
 .env.secret
 *.key
 *.pem
+
+# Supabase credentials
+supabase/.env
+supabase/.env.local
+*.supabase.key
 
 # Large files
 *.zip

@@ -48,3 +48,5 @@ As Diretrizes de Impacto na Comunidade foram inspiradas pela [escada de aplicaç
 
 Para respostas a perguntas comuns sobre este código de conduta, consulte as Perguntas Frequentes em https://www.contributor-covenant.org/faq. Traduções estão disponíveis em https://www.contributor-covenant.org/translations.
 
+
+

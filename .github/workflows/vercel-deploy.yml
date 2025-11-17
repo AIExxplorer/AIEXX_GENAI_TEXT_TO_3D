@@ -1,0 +1,79 @@
+name: 🚀 Deploy Automático Vercel
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/**'
+      - 'docs/**'
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  deploy-vercel:
+    name: Deploy na Vercel
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip deploy]')"
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+      
+      - name: Instalar dependências do web
+        working-directory: ./web
+        run: npm ci
+      
+      - name: Build do web
+        working-directory: ./web
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.aiexx.com' }}
+          NODE_ENV: production
+      
+      - name: Deploy para Vercel (Produção)
+        uses: amondnet/vercel-action@v25
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./web
+      
+      - name: Deploy para Vercel (Preview)
+        uses: amondnet/vercel-action@v25
+        if: github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main'
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./web
+      
+      - name: Comentário no PR (se aplicável)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const output = `✅ Deploy realizado com sucesso na Vercel!
+            
+            🌐 **Preview URL**: ${{ steps.deploy.outputs.preview-url }}
+            
+            📦 **Deployment ID**: ${{ steps.deploy.outputs.deployment-id }}
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });
+

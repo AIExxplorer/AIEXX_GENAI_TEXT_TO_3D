@@ -31,6 +31,18 @@ interface ImportMetaEnv {
   readonly VITE_HUGGINGFACE_API_KEY?: string;
 
   /**
+   * URL do projeto Supabase
+   * @example https://grpxuporwqdyckkyhlcx.supabase.co
+   */
+  readonly VITE_SUPABASE_URL: string;
+
+  /**
+   * Chave pública (anon key) do Supabase
+   * ⚠️ ATENÇÃO: Esta variável será exposta ao cliente!
+   */
+  readonly VITE_SUPABASE_ANON_KEY: string;
+
+  /**
    * Ambiente de execução
    */
   readonly NODE_ENV: 'development' | 'production' | 'test';

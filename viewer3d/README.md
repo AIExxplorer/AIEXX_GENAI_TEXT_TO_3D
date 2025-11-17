@@ -1,47 +1,80 @@
-# 🎨 Motor de Visualização 3D
+# 🎨 Motor de Visualização 3D - Viewer3D
 
-Motor independente para visualização de arquivos 3D (OBJ, MTL) com suporte a drag & drop.
-
-## 🚀 Funcionalidades
-
-- ✅ Visualização de arquivos OBJ/MTL
-- ✅ Wireframe de referência (X, Y, Z)
-- ✅ Controles de câmera (perspectiva, top, side, front, back)
-- ✅ Drag & drop de arquivos
-- ✅ Leitura de malhas 3D e texturas
-- ✅ Compatível com Web e Mobile
+Motor de visualização 3D independente baseado no [Online-3D-Viewer](https://github.com/kovacsv/Online3DViewer) para visualizar arquivos OBJ/MTL e outros formatos 3D.
 
 ## 📦 Instalação
 
 ```bash
-cd viewer3d
 npm install
+```
+
+## 🚀 Uso
+
+### Componente Viewer3D
+
+```tsx
+import { Viewer3D } from '@aiexx/viewer3d';
+import type { ModelInfo } from '@aiexx/viewer3d';
+
+const model: ModelInfo = {
+  name: 'Meu Modelo',
+  urls: ['model.obj', 'model.mtl'],
+  description: 'Descrição do modelo',
+};
+
+function App() {
+  return (
+    <Viewer3D 
+      model={model} 
+      width="100%" 
+      height="500px"
+    />
+  );
+}
+```
+
+### Componente ModelCard
+
+```tsx
+import { ModelCard } from '@aiexx/viewer3d';
+
+function App() {
+  return (
+    <ModelCard 
+      model={model}
+      showViewer={true}
+      onClick={(model) => console.log('Modelo clicado:', model)}
+    />
+  );
+}
 ```
 
 ## 🛠️ Desenvolvimento
 
 ```bash
+# Desenvolvimento
 npm run dev
-```
 
-Acesse `http://localhost:5173` no navegador.
-
-## 🏗️ Build
-
-```bash
+# Build
 npm run build
+
+# Preview
+npm run preview
+
+# Lint
+npm run lint
 ```
 
-## 📁 Estrutura
+## 📚 Documentação
 
-```
-viewer3d/
-├── src/
-│   ├── components/     # Componentes React/Vue
-│   ├── utils/          # Utilitários (loaders OBJ/MTL)
-│   ├── types/          # Definições TypeScript
-│   └── index.ts        # Entry point
-├── public/             # Arquivos estáticos
-└── package.json
-```
+- [Online-3D-Viewer Documentation](https://kovacsv.github.io/Online3DViewer/)
+- [GitHub Repository](https://github.com/kovacsv/Online3DViewer)
 
+## 🎯 Formatos Suportados
+
+- **Import**: OBJ, MTL, GLTF, GLB, 3DS, STL, PLY, e mais
+- **Export**: OBJ, GLTF, STL, PLY
+
+## 📝 Licença
+
+Apache-2.0
