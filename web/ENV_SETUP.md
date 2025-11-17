@@ -143,7 +143,7 @@ Para usar autenticação Google no desenvolvimento local com Supabase CLI:
    supabase start
    ```
 
-### Para Produção:
+### Opção 1: Via Dashboard (Interface Gráfica)
 
 Para usar Google OAuth em produção, configure diretamente no Dashboard do Supabase:
 
@@ -153,6 +153,78 @@ Para usar Google OAuth em produção, configure diretamente no Dashboard do Supa
 4. Adicione o Client ID e Client Secret
 5. Configure o redirect URI: `https://[seu-projeto].supabase.co/auth/v1/callback`
 6. Salve as configurações
+
+### Opção 2: Via API de Gerenciamento (Programática)
+
+Use o endpoint da API de gerenciamento do Supabase para configurar o Google OAuth de forma programática:
+
+**Endpoint:**
+```
+PATCH /v1/projects/{ref}/config/auth
+```
+
+**Exemplo usando cURL:**
+```bash
+curl -X PATCH 'https://api.supabase.com/v1/projects/{project-ref}/config/auth' \
+  -H 'Authorization: Bearer {access-token}' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "external_google_enabled": true,
+    "external_google_client_id": "your-google-client-id",
+    "external_google_secret": "your-google-client-secret"
+  }'
+```
+
+**Exemplo usando JavaScript/TypeScript:**
+```typescript
+const response = await fetch(
+  `https://api.supabase.com/v1/projects/${projectRef}/config/auth`,
+  {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      external_google_enabled: true,
+      external_google_client_id: 'your-google-client-id',
+      external_google_secret: 'your-google-client-secret',
+    }),
+  }
+);
+
+const data = await response.json();
+console.log('Google OAuth configurado:', data);
+```
+
+**Exemplo usando Python:**
+```python
+import requests
+
+url = f"https://api.supabase.com/v1/projects/{project_ref}/config/auth"
+headers = {
+    "Authorization": f"Bearer {access_token}",
+    "Content-Type": "application/json",
+}
+data = {
+    "external_google_enabled": True,
+    "external_google_client_id": "your-google-client-id",
+    "external_google_secret": "your-google-client-secret",
+}
+
+response = requests.patch(url, headers=headers, json=data)
+print("Google OAuth configurado:", response.json())
+```
+
+**Onde obter o Access Token:**
+- Acesse: https://app.supabase.com/account/tokens
+- Crie um novo token de acesso (Access Token)
+- Use este token no header `Authorization: Bearer {access-token}`
+
+**Onde obter o Project Ref:**
+- O Project Ref é o ID do seu projeto Supabase
+- Exemplo: `grpxuporwqdyckkyhlcx`
+- Encontre no Dashboard: Settings > General > Reference ID
 
 ### Links Úteis:
 

@@ -123,7 +123,9 @@ SELECT public.cleanup_expired_files();
 - [Authentication](https://supabase.com/dashboard/project/grpxuporwqdyckkyhlcx/api?page=auth)
 - [Storage](https://supabase.com/dashboard/project/grpxuporwqdyckkyhlcx/storage/buckets)
 
-## 🔐 Autenticação Google (Desenvolvimento Local)
+## 🔐 Autenticação Google
+
+### Desenvolvimento Local
 
 Para configurar autenticação Google no desenvolvimento local:
 
@@ -142,7 +144,34 @@ Para configurar autenticação Google no desenvolvimento local:
    - Edite `web/supabase/config.toml`
    - Configure o `client_id` e `secret` conforme exemplo no arquivo
 
-Para mais detalhes, consulte: `web/ENV_SETUP.md`
+### Produção - Via API de Gerenciamento
+
+Use a API de gerenciamento do Supabase para configurar programaticamente:
+
+**Endpoint:** `PATCH /v1/projects/{ref}/config/auth`
+
+**Payload:**
+```json
+{
+  "external_google_enabled": true,
+  "external_google_client_id": "your-google-client-id",
+  "external_google_secret": "your-google-client-secret"
+}
+```
+
+**Exemplo cURL:**
+```bash
+curl -X PATCH 'https://api.supabase.com/v1/projects/{project-ref}/config/auth' \
+  -H 'Authorization: Bearer {access-token}' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "external_google_enabled": true,
+    "external_google_client_id": "your-google-client-id",
+    "external_google_secret": "your-google-client-secret"
+  }'
+```
+
+Para mais detalhes e exemplos em diferentes linguagens, consulte: `web/ENV_SETUP.md`
 
 ## ⚠️ Importante
 
