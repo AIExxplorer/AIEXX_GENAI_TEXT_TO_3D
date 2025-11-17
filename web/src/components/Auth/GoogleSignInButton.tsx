@@ -79,9 +79,10 @@ export function GoogleSignInButton({
     <Button
       type="button"
       variant={variant}
-      className="w-full"
+      className="w-full !text-main"
       onClick={onClick}
       disabled={loading}
+      style={{ color: 'hsl(173 100% 42%)' }}
     >
       {loading ? (
         <>
