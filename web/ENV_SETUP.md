@@ -2,7 +2,18 @@
 
 Este arquivo documenta as variáveis de ambiente necessárias para a aplicação web.
 
-## Arquivo .env.local
+## Configuração Rápida
+
+### Opção 1: Usar o arquivo de exemplo (Recomendado)
+
+```bash
+# No diretório web/
+cp .env.example .env.local
+```
+
+Depois, edite o arquivo `.env.local` e preencha os valores necessários.
+
+### Opção 2: Criar manualmente
 
 Crie um arquivo `.env.local` na raiz do diretório `web/` com as seguintes variáveis:
 
@@ -45,15 +56,64 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
 ## Como Obter as Credenciais do Supabase
 
-1. Acesse [Supabase Dashboard](https://app.supabase.com)
-2. Selecione seu projeto
-3. Vá em **Settings** > **API**
-4. Copie a **URL** do projeto e cole em `VITE_SUPABASE_URL`
-5. Copie a **anon public** key e cole em `VITE_SUPABASE_ANON_KEY`
+### Passo a Passo Detalhado:
+
+1. **Acesse o Supabase Dashboard**
+   - Vá para: https://app.supabase.com
+   - Faça login ou crie uma conta gratuita
+
+2. **Crie ou Selecione um Projeto**
+   - Se não tiver um projeto, clique em "New Project"
+   - Preencha os dados (nome, senha do banco, região)
+   - Aguarde a criação do projeto (pode levar alguns minutos)
+
+3. **Obtenha as Credenciais**
+   - No menu lateral, vá em **Settings** (ícone de engrenagem)
+   - Clique em **API**
+   - Você verá duas informações importantes:
+     - **Project URL**: Copie este valor para `VITE_SUPABASE_URL`
+     - **anon public** key: Copie este valor para `VITE_SUPABASE_ANON_KEY`
+
+4. **Configurar Storage (Obrigatório)**
+   - No menu lateral, vá em **Storage**
+   - Clique em **New bucket**
+   - Nome do bucket: `temp-files`
+   - Marque como **Public bucket** (para permitir acesso público aos arquivos)
+   - Clique em **Create bucket**
+
+5. **Configurar Políticas de Acesso (Opcional mas Recomendado)**
+   - No bucket `temp-files`, vá em **Policies**
+   - Crie uma política para permitir upload apenas para usuários autenticados:
+     - Policy name: `Allow authenticated uploads`
+     - Allowed operation: `INSERT`
+     - Target roles: `authenticated`
+     - USING expression: `auth.role() = 'authenticated'`
+
+## Estrutura dos Arquivos
+
+- `.env.example` - Template com todas as variáveis e instruções (pode ser commitado)
+- `.env.local` - Seu arquivo de configuração pessoal (NÃO será commitado)
+- `.env.local.template` - Template simplificado (pode ser commitado)
+
+## Validação
+
+Após configurar o `.env.local`, verifique se as variáveis estão sendo carregadas:
+
+```bash
+# No diretório web/
+npm run dev
+```
+
+Se houver erros sobre variáveis não definidas, verifique:
+1. Se o arquivo `.env.local` existe na raiz de `web/`
+2. Se todas as variáveis começam com `VITE_`
+3. Se não há espaços extras ou caracteres especiais
 
 ## Importante
 
-- ⚠️ **NUNCA** commite o arquivo `.env.local` no repositório
+- ⚠️ **NUNCA** commite o arquivo `.env.local` no repositório (já está no .gitignore)
 - ⚠️ As variáveis com prefixo `VITE_` são expostas ao cliente (browser)
 - ⚠️ Não coloque credenciais sensíveis em variáveis `VITE_*`
+- ⚠️ Use apenas a chave **anon public** do Supabase, nunca a **service_role** key
+- ⚠️ A chave anon é segura para uso no cliente, mas não deve ser compartilhada publicamente
 

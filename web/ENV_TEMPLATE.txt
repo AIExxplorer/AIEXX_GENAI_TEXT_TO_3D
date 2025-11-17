@@ -1,0 +1,78 @@
+# ============================================
+# Template de Variáveis de Ambiente
+# ============================================
+# 
+# INSTRUÇÕES:
+# 1. Copie este conteúdo para um arquivo chamado .env.local na raiz de web/
+# 2. Preencha os valores abaixo com suas credenciais
+# 3. NUNCA commite o arquivo .env.local no repositório
+#
+# Comando no Windows PowerShell:
+# Copy-Item ENV_TEMPLATE.txt .env.local
+#
+# Comando no Linux/Mac:
+# cp ENV_TEMPLATE.txt .env.local
+# ============================================
+
+# ============================================
+# API Backend
+# ============================================
+# URL da API Backend
+# Exemplo para desenvolvimento local: http://localhost:8000
+# Exemplo para produção: https://api.aiexx.com
+VITE_API_URL=http://localhost:8000
+
+# ============================================
+# Informações da Aplicação
+# ============================================
+# Nome da aplicação (usado em alguns lugares da UI)
+VITE_APP_NAME=AIEXX 3D
+
+# Versão da aplicação
+VITE_APP_VERSION=1.0.0
+
+# ============================================
+# Supabase Configuration
+# ============================================
+# 
+# COMO OBTER AS CREDENCIAIS DO SUPABASE:
+# 1. Acesse: https://app.supabase.com
+# 2. Faça login ou crie uma conta
+# 3. Crie um novo projeto ou selecione um existente
+# 4. Vá em: Settings > API
+# 5. Copie a "Project URL" e cole abaixo em VITE_SUPABASE_URL
+# 6. Copie a "anon public" key e cole abaixo em VITE_SUPABASE_ANON_KEY
+#
+# ⚠️ ATENÇÃO: A chave anon será exposta ao cliente (browser)
+# Por isso, use apenas a chave "anon public", nunca a "service_role" key
+# ============================================
+
+# URL do projeto Supabase
+# Formato: https://[seu-projeto-id].supabase.co
+# Exemplo: https://grpxuporwqdyckkyhlcx.supabase.co
+# PREENCHA COM SUA URL DO SUPABASE:
+VITE_SUPABASE_URL=https://grpxuporwqdyckkyhlcx.supabase.co
+
+# Chave pública (anon key) do Supabase
+# Esta é a chave "anon public" do seu projeto
+# ⚠️ ATENÇÃO: Esta chave será exposta ao cliente (browser)
+# Formato: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# PREENCHA COM SUA CHAVE ANON DO SUPABASE:
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# ============================================
+# Opcional - Outras APIs
+# ============================================
+
+# Token do Hugging Face (se necessário para geração de modelos)
+# ⚠️ ATENÇÃO: Esta variável será exposta ao cliente!
+# Obtenha em: https://huggingface.co/settings/tokens
+# VITE_HUGGINGFACE_API_KEY=your_huggingface_api_key_here
+
+# ============================================
+# Configurações de Desenvolvimento
+# ============================================
+# Estas variáveis são definidas automaticamente pelo Vite
+# NODE_ENV=development
+# MODE=development
+
