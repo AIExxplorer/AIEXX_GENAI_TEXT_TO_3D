@@ -87,7 +87,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
 
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Badge variant="neutral" className="text-xs font-semibold">
+              <Badge variant="neutral" className="text-xs font-semibold !text-main">
                 Nome Completo
               </Badge>
               <span className="text-xs text-muted-foreground">(opcional)</span>
@@ -108,7 +108,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
           </div>
 
           <div className="space-y-2">
-            <Badge variant="neutral" className="text-xs font-semibold">
+            <Badge variant="neutral" className="text-xs font-semibold !text-main">
               Email
             </Badge>
             <div className="relative">
@@ -128,7 +128,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
           </div>
 
           <div className="space-y-2">
-            <Badge variant="neutral" className="text-xs font-semibold">
+            <Badge variant="neutral" className="text-xs font-semibold !text-main">
               Senha
             </Badge>
             <div className="relative">
@@ -152,7 +152,7 @@ export function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormProps): Rea
           </div>
 
           <div className="space-y-2">
-            <Badge variant="neutral" className="text-xs font-semibold">
+            <Badge variant="neutral" className="text-xs font-semibold !text-main">
               Confirmar Senha
             </Badge>
             <div className="relative">

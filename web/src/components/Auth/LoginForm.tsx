@@ -70,7 +70,7 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           )}
 
           <div className="space-y-2">
-            <Badge variant="neutral" className="text-xs font-semibold">
+            <Badge variant="neutral" className="text-xs font-semibold !text-main">
               Email
             </Badge>
             <div className="relative">
@@ -90,7 +90,7 @@ export function LoginForm({ onSuccess, onSwitchToSignUp }: LoginFormProps): Reac
           </div>
 
           <div className="space-y-2">
-            <Badge variant="neutral" className="text-xs font-semibold">
+            <Badge variant="neutral" className="text-xs font-semibold !text-main">
               Senha
             </Badge>
             <div className="relative">
