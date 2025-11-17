@@ -1,10 +1,30 @@
 /**
- * Componente de navegação principal
+ * Componente de navegação principal usando Neobrutalism
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '../ThemeToggle';
+import { AuthDialog } from '../Auth/AuthDialog';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
+import { LogIn, LogOut, User } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export interface NavigationProps {
   /** Classe CSS adicional */
@@ -12,118 +32,123 @@ export interface NavigationProps {
 }
 
 /**
- * Componente Navigation - Menu de navegação principal
+ * Componente Navigation - Menu de navegação principal com estilo Neobrutalism
  */
 export function Navigation({ className = '' }: NavigationProps): React.JSX.Element {
   const location = useLocation();
+  const { authState, signOut, isAuthenticated } = useAuth();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   const isActive = (path: string): boolean => {
     return location.pathname === path;
   };
 
+  /**
+   * Manipula logout
+   */
+  const handleSignOut = async (): Promise<void> => {
+    await signOut();
+  };
+
   const navItems = [
     { path: '/', label: 'Início', icon: '🏠' },
     { path: '/generate', label: 'Gerar Modelo', icon: '🎨' },
+    { path: '/viewer', label: 'Visualizar', icon: '👁️' },
     { path: '/gallery', label: 'Galeria', icon: '🖼️' },
     { path: '/about', label: 'Sobre', icon: 'ℹ️' },
   ];
 
   return (
     <nav
-      className={`navigation ${className}`}
-      style={{
-        backgroundColor: 'var(--color-bg-primary)',
-        borderBottom: '2px solid var(--color-bg-tertiary)',
-        boxShadow: 'var(--shadow-sm)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-        backdropFilter: 'blur(10px)',
-      }}
+      className={cn('sticky top-0 z-50 border-b-4 border-border bg-background shadow-shadow', className)}
     >
-      <div
-        style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: '0 2rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '70px',
-        }}
-      >
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link
           to="/"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            textDecoration: 'none',
-            color: 'var(--color-text-primary)',
-            fontWeight: '700',
-            fontSize: '1.5rem',
-            transition: 'opacity var(--transition-fast)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.8';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1';
-          }}
+          className="flex items-center gap-2 text-xl font-bold text-white transition-opacity hover:opacity-80"
         >
-          <span style={{ fontSize: '2rem' }}>🎨</span>
-          <span>AIEXX 3D</span>
+          <span className="text-2xl">🎨</span>
+          <span className="font-extrabold">AIEXX 3D</span>
         </Link>
 
-        {/* Menu Items */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '0.5rem',
-            alignItems: 'center',
-          }}
-        >
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              style={{
-                padding: '0.75rem 1.25rem',
-                textDecoration: 'none',
-                color: isActive(item.path) ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                fontWeight: isActive(item.path) ? '600' : '400',
-                borderRadius: '8px',
-                transition: 'all var(--transition-fast)',
-                backgroundColor: isActive(item.path) ? 'var(--color-bg-secondary)' : 'transparent',
-                borderBottom: isActive(item.path) ? `3px solid var(--color-primary)` : '3px solid transparent',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive(item.path)) {
-                  e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)';
-                  e.currentTarget.style.color = 'var(--color-text-primary)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive(item.path)) {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = 'var(--color-text-secondary)';
-                }
-              }}
+        {/* Navigation Menu */}
+        <NavigationMenu>
+          <NavigationMenuList className="flex gap-2">
+            {navItems.map((item) => (
+              <NavigationMenuItem key={item.path}>
+                <NavigationMenuLink asChild>
+                  <Link
+                    to={item.path}
+                    className={cn(
+                      'flex items-center gap-2 px-5 py-2.5 text-base font-semibold transition-all rounded-base border-2',
+                      isActive(item.path)
+                        ? 'bg-primary text-primary-foreground border-border shadow-shadow'
+                        : 'text-white border-transparent hover:bg-muted hover:border-border'
+                    )}
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        {/* Right side actions */}
+        <div className="flex items-center gap-4">
+          {/* Auth Section */}
+          {isAuthenticated() ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="noShadow" size="icon" className="rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>
+                      {authState.user?.email?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">Minha Conta</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {authState.user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setShowAuthDialog(true)}
+              className="gap-2"
             >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          ))}
-          
+              <LogIn className="h-4 w-4" />
+              Entrar
+            </Button>
+          )}
+
           {/* Theme Toggle */}
           <ThemeToggle />
         </div>
       </div>
+
+      {/* Auth Dialog */}
+      <AuthDialog
+        open={showAuthDialog}
+        onOpenChange={setShowAuthDialog}
+        initialMode="login"
+      />
     </nav>
   );
 }
-
