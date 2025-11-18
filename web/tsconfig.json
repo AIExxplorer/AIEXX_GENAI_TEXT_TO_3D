@@ -29,7 +29,8 @@
       "@utils/*": ["./src/utils/*"],
       "@types/*": ["./src/types/*"],
       "@/lib/*": ["./src/lib/*"],
-      "@/hooks/*": ["./src/hooks/*"]
+      "@/hooks/*": ["./src/hooks/*"],
+      "@aiexx/viewer3d": ["../viewer3d/src/index.ts"]
     }
   },
   "include": ["src"],
