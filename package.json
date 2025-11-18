@@ -5,9 +5,10 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "node src/index.js",
-    "build": "echo 'Este é o package.json da raiz. Para build do front-end, use: npm run web:build'",
+    "dev": "cd web && npm run dev",
+    "build": "cd web && npm install && npm run build",
     "test": "vitest",
+    "postinstall": "cd web && npm install",
     "test:coverage": "vitest --coverage",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
