@@ -1,9 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "cd web && npm install --legacy-peer-deps && npm run build",
-  "outputDirectory": "web/dist",
-  "installCommand": "echo 'Skipping root install'",
   "framework": null,
   "regions": ["iad1"],
   "build": {
