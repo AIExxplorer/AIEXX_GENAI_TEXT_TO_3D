@@ -87,7 +87,17 @@
 
 ---
 
-### 2. **`web/vercel.json` criado**
+### 2. **`web/.npmrc` adicionado (NOVO)**
+
+```
+production=false
+```
+
+**Por que:** o Vercel executa `npm install` com `NODE_ENV=production`, o que ignora devDependencies (como o Vite). Com esse `.npmrc`, o npm sempre instalará as devDependencies, garantindo que `vite` esteja disponível durante o build.
+
+---
+
+### 3. **`web/vercel.json` criado**
 
 Novo arquivo de configuração específico para o front-end:
 
