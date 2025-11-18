@@ -6,7 +6,6 @@ src/
 tests/
 *.py
 requirements*.txt
-viewer3d/
 docs/
 examples/
 output/
