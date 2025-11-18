@@ -1,0 +1,103 @@
+{
+  "name": "aiexx-genai-text-to-3d",
+  "version": "1.0.0",
+  "description": "Motor de visualização 3D independente e aplicação web/mobile para geração de modelos 3D via IA (TEXT_TO_3D)",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.js",
+    "build": "echo 'Este é o package.json da raiz. Para build do front-end, use: npm run web:build'",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "prepare": "husky install",
+    "commit": "cz",
+    "web:dev": "cd web && npm run dev",
+    "web:build": "cd web && npm run build",
+    "web:preview": "cd web && npm run preview",
+    "viewer:dev": "cd viewer3d && npm run dev",
+    "viewer:build": "cd viewer3d && npm run build",
+    "viewer:preview": "cd viewer3d && npm run preview",
+    "setup": "node scripts/setup.js",
+    "setup:win": "powershell -ExecutionPolicy Bypass -File scripts/dev-setup.ps1",
+    "setup:unix": "bash scripts/dev-setup.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AIExxplorer/AIEXX_GENAI_TEXT_TO_3D.git"
+  },
+  "keywords": [
+    "3d",
+    "modeling",
+    "obj",
+    "text-to-3d",
+    "ai-generated",
+    "parametric-design",
+    "ai-powered",
+    "procedural-generation",
+    "cad",
+    "manufacturing"
+  ],
+  "author": "AIEXX",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/AIExxplorer/AIEXX_GENAI_TEXT_TO_3D/issues"
+  },
+  "homepage": "https://github.com/AIExxplorer/AIEXX_GENAI_TEXT_TO_3D#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitest/coverage-v8": "^1.0.4",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "vitest": "^1.0.4"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ],
+    "*.py": [
+      "black",
+      "isort"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}
+
