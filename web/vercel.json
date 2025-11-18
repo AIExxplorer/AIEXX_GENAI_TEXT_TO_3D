@@ -1,10 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "npm ci && npm run build",
+  "buildCommand": "npm install && npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "installCommand": "npm ci",
+  "installCommand": "npm install",
   "framework": "vite",
   "regions": ["iad1"],
   "build": {

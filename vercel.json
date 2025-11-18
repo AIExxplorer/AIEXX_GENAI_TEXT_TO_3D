@@ -1,10 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "cd web && npm ci && npm run build",
+  "buildCommand": "cd web && npm install && npm run build",
   "outputDirectory": "web/dist",
   "devCommand": "cd web && npm run dev",
-  "installCommand": "cd web && npm ci",
+  "installCommand": "cd web && npm install",
   "framework": null,
   "regions": ["iad1"],
   "build": {
