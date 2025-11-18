@@ -111,8 +111,11 @@ function fileServerPlugin(): Plugin {
  * 
  * @see https://vite.dev/config/
  */
-export default defineConfig({
-  plugins: [react(), tailwindcss(), fileServerPlugin()],
+export default defineConfig(({ command }) => {
+  const isServe = command === 'serve';
+
+  return {
+  plugins: [react(), tailwindcss(), ...(isServe ? [fileServerPlugin()] : [])],
   
   // Resolução de caminhos
   resolve: {
@@ -161,5 +164,6 @@ export default defineConfig({
   
   // Variáveis de ambiente
   envPrefix: 'VITE_',
+  };
 });
 
