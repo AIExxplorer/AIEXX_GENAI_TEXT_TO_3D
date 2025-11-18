@@ -1,0 +1,4 @@
+# Ignorar tudo exceto o diretório web
+/*
+!/web
+
