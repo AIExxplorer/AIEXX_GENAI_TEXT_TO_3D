@@ -140,7 +140,7 @@ export function HomePage(): React.JSX.Element {
                   Pronto para começar?
                 </CardTitle>
                 <CardDescription className="mb-8 text-xl text-primary-foreground/90">
-                  Crie seu primeiro modelo 3D agora mesmo. É rápido, fácil e gratuito!
+                  Crie seu primeiro modelo 3D agora mesmo. É rápido e fácil!
                 </CardDescription>
                 <Button asChild size="lg" variant="reverse">
                   <Link to="/generate">🎨 Gerar Meu Primeiro Modelo</Link>
