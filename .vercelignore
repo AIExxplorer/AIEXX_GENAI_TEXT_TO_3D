@@ -1,6 +1,8 @@
 # Ignorar arquivos desnecessários para o build
 node_modules/
+# Ignora apenas o backend Python, mantendo o front-end em web/src
 src/
+!web/src/
 tests/
 *.py
 requirements*.txt
