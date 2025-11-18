@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "cd web && npm run dev",
-    "build": "cd web && npm install && npm run build",
+    "build": "cd web && npm install --include=dev && npm run build",
     "test": "vitest",
-    "postinstall": "cd web && npm install",
+    "postinstall": "cd web && npm install --include=dev",
     "test:coverage": "vitest --coverage",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
