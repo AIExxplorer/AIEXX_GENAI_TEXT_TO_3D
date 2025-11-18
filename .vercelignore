@@ -1,4 +1,15 @@
-# Ignorar tudo exceto o diretório web
-/*
-!/web
+# Ignorar arquivos desnecessários para o build
+node_modules/
+src/
+tests/
+*.py
+requirements*.txt
+viewer3d/
+docs/
+examples/
+output/
+projects/
+scripts/
+.git/
+.github/
 
