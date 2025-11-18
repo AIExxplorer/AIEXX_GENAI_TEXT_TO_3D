@@ -1,14 +1,35 @@
-# ✅ Status do Deploy na Vercel - CORRIGIDO
+# ✅ Status do Deploy na Vercel - CORRIGIDO (Atualizado)
 
-## 🔴 Problema Identificado nos Logs
+## 🔴 Histórico de Problemas e Correções
+
+### ❌ Problema #1: `vite: command not found` (RESOLVIDO ✅)
 
 ```
 19:58:50.403 sh: line 1: vite: command not found
 19:58:50.412 Error: Command "npm install && npm run build" exited with 127
 ```
 
-### 🔍 Análise do Erro
+**Causa:** Build executando na raiz sem dependências do vite  
+**Correção:** Adicionado `cd web &&` aos comandos do vercel.json  
+**Status:** ✅ RESOLVIDO
 
+---
+
+### ❌ Problema #2: `npm ci requires package-lock.json` (RESOLVIDO ✅)
+
+```
+13:16:00.075 npm error The `npm ci` command can only install with an existing package-lock.json
+13:16:00.113 Error: Command "npm ci" exited with 1
+```
+
+**Causa:** `npm ci` requer package-lock.json e é mais restritivo  
+**Correção:** Substituído `npm ci` por `npm install` (mais flexível)  
+**Status:** ✅ RESOLVIDO  
+**Commit:** `937b112` (branch master: `a23cbef`)
+
+### 🔍 Análise dos Erros
+
+#### Erro #1: Exit Code 127 (vite não encontrado)
 **Exit Code 127:** Comando não encontrado  
 **Comando faltando:** `vite`
 
@@ -16,6 +37,15 @@
 - A Vercel estava executando `npm install` na **raiz do projeto**
 - O `package.json` da raiz não contém `vite` nas dependências
 - O script `build` tentava executar `vite build` sem ter o vite instalado
+
+#### Erro #2: Exit Code 1 (npm ci falhou)
+**Exit Code 1:** Falha na execução  
+**Comando:** `npm ci`
+
+**Causa raiz:**
+- `npm ci` (clean install) requer um `package-lock.json` existente e commitado
+- Mais restritivo que `npm install`
+- Usado para builds determinísticos em CI/CD, mas pode falhar em alguns ambientes
 
 ---
 
@@ -31,7 +61,7 @@
 }
 ```
 
-**Depois:**
+**Depois (Versão 1):**
 ```json
 {
   "buildCommand": "cd web && npm ci && npm run build",
@@ -40,9 +70,19 @@
 }
 ```
 
+**Depois (Versão 2 - Atual):**
+```json
+{
+  "buildCommand": "cd web && npm install && npm run build",
+  "outputDirectory": "web/dist",
+  "installCommand": "cd web && npm install"
+}
+```
+
 **Mudanças:**
 - ✅ `cd web &&` garante execução no diretório correto
-- ✅ `npm ci` para builds determinísticos e mais rápidos
+- ✅ `npm install` mais flexível que `npm ci`
+- ✅ Funciona com ou sem package-lock.json
 - ✅ Output directory corrigido: `web/dist`
 
 ---
@@ -64,10 +104,20 @@ Novo arquivo de configuração específico para o front-end:
 }
 ```
 
+**Configuração atual:**
+```json
+{
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite"
+}
+```
+
 **Benefícios:**
 - ✅ Configuração específica para quando Root Directory = `web`
 - ✅ Framework preset: `vite`
 - ✅ Node.js fixado em versão 20
+- ✅ `npm install` mais compatível com diferentes ambientes
 
 ---
 
