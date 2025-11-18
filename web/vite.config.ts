@@ -124,7 +124,7 @@ export default defineConfig({
       '@types': path.resolve(__dirname, './src/types'),
       '@/lib': path.resolve(__dirname, './src/lib'),
       '@/hooks': path.resolve(__dirname, './src/hooks'),
-      '@aiexx/viewer3d': path.resolve(__dirname, '../viewer3d/src/index.ts'),
+      '@aiexx/viewer3d': path.resolve(__dirname, './src/vendor/viewer3d/index.ts'),
     },
   },
   
