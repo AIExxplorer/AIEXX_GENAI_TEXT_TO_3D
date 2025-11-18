@@ -30,7 +30,7 @@
       "@types/*": ["./src/types/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@aiexx/viewer3d": ["../viewer3d/src/index.ts"]
+      "@aiexx/viewer3d": ["./src/vendor/viewer3d/index.ts"]
     }
   },
   "include": ["src"],
