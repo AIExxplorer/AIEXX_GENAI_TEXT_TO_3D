@@ -14,18 +14,23 @@ import { ProtectedRoute } from './components/Auth/ProtectedRoute';
 function App(): JSX.Element {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/generate" element={<GenerationPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
-          <Route 
-            path="/viewer" 
+          <Route
+            path="/viewer"
             element={
               <ProtectedRoute showLoginInline>
                 <ViewerPage />
               </ProtectedRoute>
-            } 
+            }
           />
           <Route path="/about" element={<AboutPage />} />
         </Routes>
@@ -36,4 +41,3 @@ function App(): JSX.Element {
 }
 
 export default App;
-
