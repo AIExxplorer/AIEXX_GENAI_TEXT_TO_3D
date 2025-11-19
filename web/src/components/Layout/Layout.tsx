@@ -15,16 +15,17 @@ export interface LayoutProps {
 /**
  * Componente Layout - Layout comum para todas as páginas
  */
-export function Layout({ children, showFooter = true }: LayoutProps): React.JSX.Element {
+export function Layout({
+  children,
+  showFooter = true,
+}: LayoutProps): React.JSX.Element {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
-      <main className="flex-1 w-full">
-        {children}
-      </main>
+      <main className="flex-1 w-full">{children}</main>
       {showFooter && (
-        <footer className="mt-auto border-t-2 border-border bg-card p-8 text-center text-foreground">
-          <p className="text-foreground/80">
+        <footer className="mt-auto border-t-2 border-border bg-card p-4 md:p-8 text-center text-foreground">
+          <p className="text-sm md:text-base text-foreground/80 px-4">
             Desenvolvido com ❤️ por{' '}
             <a
               href="https://github.com/AIExxplorer"
@@ -35,8 +36,9 @@ export function Layout({ children, showFooter = true }: LayoutProps): React.JSX.
               AIEXX
             </a>
           </p>
-          <p className="mt-2 text-sm text-foreground/70">
-            © {new Date().getFullYear()} AIEXX GENAI TEXT_TO_3D. Todos os direitos reservados.
+          <p className="mt-2 text-xs md:text-sm text-foreground/70 px-4">
+            © {new Date().getFullYear()} AIEXX GENAI TEXT_TO_3D. Todos os
+            direitos reservados.
           </p>
         </footer>
       )}

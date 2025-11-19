@@ -6,15 +6,29 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Layout } from '../components/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Upload, X, File, Loader2, CheckCircle2, Info, LogIn } from 'lucide-react';
+import {
+  Upload,
+  X,
+  File,
+  Loader2,
+  CheckCircle2,
+  Info,
+  LogIn,
+} from 'lucide-react';
 import * as OV from 'online-3d-viewer';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { AuthSideMenu } from '@/components/Auth/AuthSideMenu';
 import { uploadFiles } from '@/lib/supabaseStorage';
 
@@ -39,7 +53,7 @@ export function ViewerPage(): React.JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<OV.EmbeddedViewer | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { authState, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthContext();
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,13 +74,13 @@ export function ViewerPage(): React.JSX.Element {
       clearTimeout(loadingTimeoutRef.current);
       loadingTimeoutRef.current = null;
     }
-    
+
     // Limpar intervalo de verificação
     if (checkIntervalRef.current) {
       clearInterval(checkIntervalRef.current);
       checkIntervalRef.current = null;
     }
-    
+
     if (viewerRef.current) {
       try {
         viewerRef.current.Destroy();
@@ -76,7 +90,7 @@ export function ViewerPage(): React.JSX.Element {
       viewerRef.current = null;
     }
     // Limpar URLs de arquivos
-    fileUrls.forEach((url) => {
+    fileUrls.forEach(url => {
       if (url.startsWith('blob:')) {
         URL.revokeObjectURL(url);
       }
@@ -99,16 +113,20 @@ export function ViewerPage(): React.JSX.Element {
     }
 
     const fileArray = Array.from(files);
-    
+
     // Filtrar apenas arquivos 3D suportados
-    const supportedExtensions = SUPPORTED_FORMATS.map((f) => f.ext);
-    const validFiles = fileArray.filter((file) => {
-      const extension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    const supportedExtensions = SUPPORTED_FORMATS.map(f => f.ext);
+    const validFiles = fileArray.filter(file => {
+      const extension = file.name
+        .toLowerCase()
+        .substring(file.name.lastIndexOf('.'));
       return supportedExtensions.includes(extension);
     });
 
     if (validFiles.length === 0) {
-      setError(`Nenhum arquivo 3D válido encontrado. Formatos suportados: ${SUPPORTED_FORMATS.map((f) => f.name).join(', ')}`);
+      setError(
+        `Nenhum arquivo 3D válido encontrado. Formatos suportados: ${SUPPORTED_FORMATS.map(f => f.name).join(', ')}`
+      );
       return;
     }
 
@@ -116,46 +134,51 @@ export function ViewerPage(): React.JSX.Element {
     const sortedFiles = validFiles.sort((a, b) => {
       const aExt = a.name.toLowerCase().substring(a.name.lastIndexOf('.'));
       const bExt = b.name.toLowerCase().substring(b.name.lastIndexOf('.'));
-      
+
       // OBJ primeiro
       if (aExt === '.obj' && bExt !== '.obj') return -1;
       if (bExt === '.obj' && aExt !== '.obj') return 1;
-      
+
       // MTL depois de OBJ
       if (aExt === '.mtl' && bExt !== '.mtl' && bExt !== '.obj') return -1;
       if (bExt === '.mtl' && aExt !== '.mtl' && aExt !== '.obj') return 1;
-      
+
       return 0;
     });
 
     setIsLoading(true);
     setError(null);
     setModelLoaded(false);
-    
+
     try {
       // Fazer upload para Supabase Storage
       const userId = authState.user.id;
       const uploadResults = await uploadFiles(sortedFiles, userId);
-      
-      const httpUrls = uploadResults.map((result) => result.publicUrl);
-      const filePaths = uploadResults.map((result) => result.filePath);
-      
+
+      const httpUrls = uploadResults.map(result => result.publicUrl);
+      const filePaths = uploadResults.map(result => result.filePath);
+
       // Limpar URLs anteriores (blob URLs)
-      fileUrls.forEach((url) => {
+      fileUrls.forEach(url => {
         if (url.startsWith('blob:')) {
           URL.revokeObjectURL(url);
         }
       });
-      
-      console.log('Arquivos ordenados:', sortedFiles.map(f => f.name));
+
+      console.log(
+        'Arquivos ordenados:',
+        sortedFiles.map(f => f.name)
+      );
       console.log('URLs públicas do Supabase:', httpUrls);
-      
+
       setFileUrls(httpUrls);
       setUploadedFilePaths(filePaths);
       setLoadedFiles(sortedFiles);
     } catch (err) {
       console.error('Erro ao processar arquivos:', err);
-      setError(`Erro ao processar arquivos: ${err instanceof Error ? err.message : 'Erro desconhecido'}`);
+      setError(
+        `Erro ao processar arquivos: ${err instanceof Error ? err.message : 'Erro desconhecido'}`
+      );
       setIsLoading(false);
     }
   };
@@ -164,7 +187,11 @@ export function ViewerPage(): React.JSX.Element {
    * useEffect para inicializar o viewer quando arquivos são carregados
    */
   useEffect(() => {
-    if (!containerRef.current || loadedFiles.length === 0 || fileUrls.length === 0) {
+    if (
+      !containerRef.current ||
+      loadedFiles.length === 0 ||
+      fileUrls.length === 0
+    ) {
       return;
     }
 
@@ -194,7 +221,9 @@ export function ViewerPage(): React.JSX.Element {
 
     // Timeout para evitar carregamento infinito
     loadingTimeoutRef.current = setTimeout(() => {
-      setError('Tempo limite excedido ao carregar o modelo. Verifique se o arquivo está em um formato válido.');
+      setError(
+        'Tempo limite excedido ao carregar o modelo. Verifique se o arquivo está em um formato válido.'
+      );
       setIsLoading(false);
     }, 30000); // 30 segundos
 
@@ -226,7 +255,11 @@ export function ViewerPage(): React.JSX.Element {
         // Configurar cores
         const backgroundColor = new OV.RGBAColor(255, 255, 255, 255);
         const defaultColor = new OV.RGBColor(200, 200, 200);
-        const edgeSettings = new OV.EdgeSettings(false, new OV.RGBColor(0, 0, 0), 1);
+        const edgeSettings = new OV.EdgeSettings(
+          false,
+          new OV.RGBColor(0, 0, 0),
+          1
+        );
 
         // Criar viewer
         const viewer = new OV.EmbeddedViewer(containerRef.current!, {
@@ -240,26 +273,35 @@ export function ViewerPage(): React.JSX.Element {
             // Aguardar um pouco para verificar se há erro ou se realmente renderizou
             setTimeout(() => {
               if (!containerRef.current) return;
-              
+
               const textContent = containerRef.current.textContent || '';
-              const hasError = textContent.includes('No importable file found') || 
-                             textContent.toLowerCase().includes('error') ||
-                             textContent.includes('failed') ||
-                             textContent.includes('Cannot read properties');
-              
+              const hasError =
+                textContent.includes('No importable file found') ||
+                textContent.toLowerCase().includes('error') ||
+                textContent.includes('failed') ||
+                textContent.includes('Cannot read properties');
+
               const canvas = containerRef.current.querySelector('canvas');
-              const hasValidCanvas = canvas && canvas.width > 0 && canvas.height > 0;
-              
+              const hasValidCanvas =
+                canvas && canvas.width > 0 && canvas.height > 0;
+
               if (hasError) {
-                console.error('Erro detectado mesmo após callback onModelLoaded:', textContent);
-                setError('Não foi possível carregar o arquivo. Verifique se o formato está correto e se o arquivo não está corrompido. Para arquivos OBJ, certifique-se de incluir o arquivo MTL correspondente.');
+                console.error(
+                  'Erro detectado mesmo após callback onModelLoaded:',
+                  textContent
+                );
+                setError(
+                  'Não foi possível carregar o arquivo. Verifique se o formato está correto e se o arquivo não está corrompido. Para arquivos OBJ, certifique-se de incluir o arquivo MTL correspondente.'
+                );
                 setIsLoading(false);
                 setModelLoaded(false);
                 return;
               }
-              
+
               if (hasValidCanvas) {
-                console.log('Modelo realmente carregado - canvas válido encontrado');
+                console.log(
+                  'Modelo realmente carregado - canvas válido encontrado'
+                );
                 if (loadingTimeoutRef.current) {
                   clearTimeout(loadingTimeoutRef.current);
                   loadingTimeoutRef.current = null;
@@ -271,7 +313,9 @@ export function ViewerPage(): React.JSX.Element {
                 setIsLoading(false);
                 setModelLoaded(true);
               } else {
-                console.warn('Callback chamado mas canvas não encontrado, aguardando verificação periódica...');
+                console.warn(
+                  'Callback chamado mas canvas não encontrado, aguardando verificação periódica...'
+                );
               }
             }, 500); // Aguardar 500ms para verificar se realmente carregou
           },
@@ -296,7 +340,9 @@ export function ViewerPage(): React.JSX.Element {
               // Verificar se o container tem conteúdo renderizado pelo viewer
               const hasViewerContent = containerRef.current.children.length > 0;
               if (!hasViewerContent) {
-                console.warn('Viewer ainda não renderizou conteúdo, aguardando mais...');
+                console.warn(
+                  'Viewer ainda não renderizou conteúdo, aguardando mais...'
+                );
                 // Tentar novamente após mais um delay
                 setTimeout(() => {
                   if (!viewerRef.current) return;
@@ -305,7 +351,9 @@ export function ViewerPage(): React.JSX.Element {
                     viewerRef.current.LoadModelFromUrlList(fileUrls);
                   } catch (retryError) {
                     console.error('Erro ao carregar após retry:', retryError);
-                    setError(`Erro ao carregar arquivos: ${retryError instanceof Error ? retryError.message : 'Erro desconhecido'}`);
+                    setError(
+                      `Erro ao carregar arquivos: ${retryError instanceof Error ? retryError.message : 'Erro desconhecido'}`
+                    );
                     setIsLoading(false);
                   }
                 }, 300);
@@ -313,61 +361,82 @@ export function ViewerPage(): React.JSX.Element {
               }
 
               console.log('Carregando modelo com URLs:', fileUrls);
-              console.log('Arquivos carregados:', loadedFiles.map(f => f.name));
-              console.log('Viewer criado e renderizado, tentando carregar modelo...');
-              
+              console.log(
+                'Arquivos carregados:',
+                loadedFiles.map(f => f.name)
+              );
+              console.log(
+                'Viewer criado e renderizado, tentando carregar modelo...'
+              );
+
               // Verificar se as URLs são válidas
               const validUrls = fileUrls.filter(url => url && url.length > 0);
               if (validUrls.length === 0) {
                 throw new Error('Nenhuma URL válida encontrada');
               }
-              
+
               console.log('URLs válidas para carregar:', validUrls);
-              
+
               // Verificar se as URLs são acessíveis antes de carregar
               console.log('Verificando acessibilidade das URLs...');
               for (const url of validUrls) {
                 try {
                   const testResponse = await fetch(url, { method: 'HEAD' });
-                  console.log(`URL ${url} acessível:`, testResponse.ok, 'Status:', testResponse.status, 'Content-Type:', testResponse.headers.get('Content-Type'));
+                  console.log(
+                    `URL ${url} acessível:`,
+                    testResponse.ok,
+                    'Status:',
+                    testResponse.status,
+                    'Content-Type:',
+                    testResponse.headers.get('Content-Type')
+                  );
                   if (!testResponse.ok) {
-                    console.warn(`URL pode não estar acessível: ${url} (Status: ${testResponse.status})`);
+                    console.warn(
+                      `URL pode não estar acessível: ${url} (Status: ${testResponse.status})`
+                    );
                     // Não lançar erro, apenas avisar
                   }
                 } catch (fetchErr) {
-                  console.warn(`Não foi possível verificar URL ${url}:`, fetchErr);
+                  console.warn(
+                    `Não foi possível verificar URL ${url}:`,
+                    fetchErr
+                  );
                   // Continuar mesmo assim, pode ser um problema de CORS no HEAD
                 }
               }
-              
+
               // Tentar carregar o modelo com as URLs válidas
               try {
                 console.log('Chamando LoadModelFromUrlList com URLs HTTP...');
                 viewerRef.current.LoadModelFromUrlList(validUrls);
               } catch (loadErr) {
                 console.error('Erro ao chamar LoadModelFromUrlList:', loadErr);
-                setError(`Erro ao carregar arquivos: ${loadErr instanceof Error ? loadErr.message : 'Erro desconhecido'}`);
+                setError(
+                  `Erro ao carregar arquivos: ${loadErr instanceof Error ? loadErr.message : 'Erro desconhecido'}`
+                );
                 setIsLoading(false);
                 setModelLoaded(false);
                 return;
               }
-              
+
               // Verificar periodicamente se o modelo foi carregado (fallback)
               let checkCount = 0;
               const maxChecks = 40; // Verificar por até 20 segundos (40 * 500ms)
-              
+
               checkIntervalRef.current = setInterval(() => {
                 checkCount++;
-                
+
                 if (containerRef.current) {
                   const canvas = containerRef.current.querySelector('canvas');
                   const textContent = containerRef.current.textContent || '';
-                  const hasError = textContent.includes('No importable file found') || 
-                                 textContent.toLowerCase().includes('error') ||
-                                 textContent.includes('failed') ||
-                                 textContent.includes('Cannot read properties');
-                  
-                  if (hasError && checkCount > 5) { // Aguardar pelo menos 2.5s antes de considerar erro
+                  const hasError =
+                    textContent.includes('No importable file found') ||
+                    textContent.toLowerCase().includes('error') ||
+                    textContent.includes('failed') ||
+                    textContent.includes('Cannot read properties');
+
+                  if (hasError && checkCount > 5) {
+                    // Aguardar pelo menos 2.5s antes de considerar erro
                     console.error('Erro detectado no viewer:', textContent);
                     if (checkIntervalRef.current) {
                       clearInterval(checkIntervalRef.current);
@@ -377,23 +446,27 @@ export function ViewerPage(): React.JSX.Element {
                       clearTimeout(loadingTimeoutRef.current);
                       loadingTimeoutRef.current = null;
                     }
-                    
+
                     // Mensagem de erro mais específica baseada no erro detectado
                     let errorMessage = 'Erro ao carregar modelo: ';
                     if (textContent.includes('No importable file found')) {
-                      errorMessage += 'O Online 3D Viewer não conseguiu identificar arquivos importáveis. Verifique se: (1) Os arquivos estão em formato válido e não corrompidos, (2) Para arquivos OBJ, o arquivo MTL correspondente está presente e correto, (3) Os arquivos foram carregados completamente. Se o problema persistir, pode ser uma limitação do viewer com o formato específico do arquivo.';
+                      errorMessage +=
+                        'O Online 3D Viewer não conseguiu identificar arquivos importáveis. Verifique se: (1) Os arquivos estão em formato válido e não corrompidos, (2) Para arquivos OBJ, o arquivo MTL correspondente está presente e correto, (3) Os arquivos foram carregados completamente. Se o problema persistir, pode ser uma limitação do viewer com o formato específico do arquivo.';
                     } else {
-                      errorMessage += 'Não foi possível carregar o arquivo. Verifique se o formato está correto e se o arquivo não está corrompido. Para arquivos OBJ, certifique-se de incluir o arquivo MTL correspondente.';
+                      errorMessage +=
+                        'Não foi possível carregar o arquivo. Verifique se o formato está correto e se o arquivo não está corrompido. Para arquivos OBJ, certifique-se de incluir o arquivo MTL correspondente.';
                     }
-                    
+
                     setError(errorMessage);
                     setIsLoading(false);
                     setModelLoaded(false);
                     return;
                   }
-                  
+
                   if (canvas && canvas.width > 0 && canvas.height > 0) {
-                    console.log('Modelo carregado com sucesso - canvas renderizado (fallback)');
+                    console.log(
+                      'Modelo carregado com sucesso - canvas renderizado (fallback)'
+                    );
                     if (checkIntervalRef.current) {
                       clearInterval(checkIntervalRef.current);
                       checkIntervalRef.current = null;
@@ -407,7 +480,7 @@ export function ViewerPage(): React.JSX.Element {
                     return;
                   }
                 }
-                
+
                 if (checkCount >= maxChecks) {
                   console.warn('Timeout ao verificar carregamento do modelo');
                   if (checkIntervalRef.current) {
@@ -422,7 +495,9 @@ export function ViewerPage(): React.JSX.Element {
                 clearTimeout(loadingTimeoutRef.current);
                 loadingTimeoutRef.current = null;
               }
-              setError(`Erro ao carregar arquivos: ${loadError instanceof Error ? loadError.message : 'Erro desconhecido'}`);
+              setError(
+                `Erro ao carregar arquivos: ${loadError instanceof Error ? loadError.message : 'Erro desconhecido'}`
+              );
               setIsLoading(false);
               setModelLoaded(false);
             }
@@ -434,7 +509,8 @@ export function ViewerPage(): React.JSX.Element {
           clearTimeout(loadingTimeoutRef.current);
           loadingTimeoutRef.current = null;
         }
-        const errorMessage = err instanceof Error ? err.message : 'Erro ao inicializar viewer 3D';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao inicializar viewer 3D';
         setError(errorMessage);
         setIsLoading(false);
         setModelLoaded(false);
@@ -458,7 +534,6 @@ export function ViewerPage(): React.JSX.Element {
     };
   }, [fileUrls, loadedFiles.length]);
 
-
   /**
    * Handler para drag over
    */
@@ -480,7 +555,9 @@ export function ViewerPage(): React.JSX.Element {
   /**
    * Handler para drop
    */
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>): Promise<void> => {
+  const handleDrop = async (
+    e: React.DragEvent<HTMLDivElement>
+  ): Promise<void> => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -494,7 +571,9 @@ export function ViewerPage(): React.JSX.Element {
   /**
    * Handler para seleção de arquivo
    */
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+  const handleFileSelect = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     const files = e.target.files;
     if (files && files.length > 0) {
       await processFiles(files);
@@ -531,13 +610,13 @@ export function ViewerPage(): React.JSX.Element {
         clearTimeout(loadingTimeoutRef.current);
         loadingTimeoutRef.current = null;
       }
-      
+
       // Limpar intervalo de verificação
       if (checkIntervalRef.current) {
         clearInterval(checkIntervalRef.current);
         checkIntervalRef.current = null;
       }
-      
+
       if (viewerRef.current) {
         try {
           viewerRef.current.Destroy();
@@ -547,7 +626,7 @@ export function ViewerPage(): React.JSX.Element {
         viewerRef.current = null;
       }
       // Limpar URLs de arquivos
-      fileUrls.forEach((url) => {
+      fileUrls.forEach(url => {
         if (url.startsWith('blob:')) {
           URL.revokeObjectURL(url);
         }
@@ -557,31 +636,37 @@ export function ViewerPage(): React.JSX.Element {
 
   return (
     <Layout>
-      <div className="h-[calc(100vh-140px)]">
+      <div className="min-h-[calc(100vh-140px)]">
         <ScrollArea className="h-full">
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-6 md:py-8">
             {/* Header */}
-            <Card className="mb-8">
-              <CardHeader className="text-center">
-                <CardTitle className="text-4xl">👁️ Visualizador 3D</CardTitle>
-                <CardDescription className="text-lg">
-                  Carregue ou arraste arquivos 3D para visualizar diretamente no navegador
+            <Card className="mb-6 md:mb-8">
+              <CardHeader className="text-center px-4 py-4 md:py-6">
+                <CardTitle className="text-2xl sm:text-3xl md:text-4xl">
+                  👁️ Visualizador 3D
+                </CardTitle>
+                <CardDescription className="text-base md:text-lg mt-2">
+                  Carregue ou arraste arquivos 3D para visualizar diretamente no
+                  navegador
                 </CardDescription>
               </CardHeader>
             </Card>
 
             {/* Aviso de autenticação */}
-            {!isAuthenticated() && (
-              <Alert className="mb-8">
+            {!isAuthenticated && (
+              <Alert className="mb-6 md:mb-8">
                 <LogIn className="h-4 w-4" />
                 <AlertTitle>Autenticação Necessária</AlertTitle>
-                <AlertDescription className="flex items-center justify-between">
-                  <span>Você precisa estar logado para carregar e visualizar arquivos 3D.</span>
+                <AlertDescription className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <span className="text-sm md:text-base">
+                    Você precisa estar logado para carregar e visualizar
+                    arquivos 3D.
+                  </span>
                   <Button
                     variant="default"
                     size="sm"
                     onClick={() => setShowAuthDialog(true)}
-                    className="ml-4"
+                    className="w-full sm:w-auto"
                   >
                     <LogIn className="h-4 w-4 mr-2" />
                     Entrar
@@ -604,17 +689,26 @@ export function ViewerPage(): React.JSX.Element {
                 onDrop={handleDrop}
                 onClick={handleSelectFiles}
               >
-                <CardContent className="flex flex-col items-center justify-center p-16 text-center">
-                  <div className="mb-6 text-6xl">📦</div>
-                  <CardTitle className="text-2xl mb-2">Arraste arquivos 3D aqui</CardTitle>
-                  <CardDescription className="text-base mb-6">
+                <CardContent className="flex flex-col items-center justify-center p-8 md:p-16 text-center">
+                  <div className="mb-4 md:mb-6 text-5xl md:text-6xl">📦</div>
+                  <CardTitle className="text-xl md:text-2xl mb-2">
+                    Arraste arquivos 3D aqui
+                  </CardTitle>
+                  <CardDescription className="text-sm md:text-base mb-4 md:mb-6 px-4">
                     ou clique para selecionar arquivos do seu computador
                   </CardDescription>
-                  <Button variant="default" size="lg" className="gap-2">
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="gap-2 w-full sm:w-auto"
+                  >
                     <Upload className="h-5 w-5" />
                     Selecionar Arquivos
                   </Button>
-                  <label htmlFor="file-input-3d" className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0">
+                  <label
+                    htmlFor="file-input-3d"
+                    className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0"
+                  >
                     Selecione arquivos 3D para visualizar
                   </label>
                   <input
@@ -623,7 +717,7 @@ export function ViewerPage(): React.JSX.Element {
                     ref={fileInputRef}
                     type="file"
                     multiple
-                    accept={SUPPORTED_FORMATS.map((f) => f.ext).join(',')}
+                    accept={SUPPORTED_FORMATS.map(f => f.ext).join(',')}
                     onChange={handleFileSelect}
                     className="hidden"
                   />
@@ -633,23 +727,29 @@ export function ViewerPage(): React.JSX.Element {
 
             {/* Informações sobre formatos suportados */}
             {loadedFiles.length === 0 && (
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <Info className="h-5 w-5" />
+              <Card className="mb-6 md:mb-8">
+                <CardHeader className="px-4 md:px-6">
+                  <CardTitle className="text-lg md:text-xl flex items-center gap-2">
+                    <Info className="h-4 w-4 md:h-5 md:w-5" />
                     Formatos Suportados
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-4 md:px-6">
                   <div className="flex flex-wrap gap-2">
-                    {SUPPORTED_FORMATS.map((format) => (
-                      <Badge key={format.ext} variant="default" className="text-xs">
+                    {SUPPORTED_FORMATS.map(format => (
+                      <Badge
+                        key={format.ext}
+                        variant="default"
+                        className="text-xs"
+                      >
                         {format.name}
                       </Badge>
                     ))}
                   </div>
-                  <CardDescription className="mt-4 text-sm">
-                    Você pode carregar múltiplos arquivos ao mesmo tempo. Para modelos OBJ, certifique-se de incluir o arquivo MTL correspondente.
+                  <CardDescription className="mt-3 md:mt-4 text-xs md:text-sm">
+                    Você pode carregar múltiplos arquivos ao mesmo tempo. Para
+                    modelos OBJ, certifique-se de incluir o arquivo MTL
+                    correspondente.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -657,28 +757,29 @@ export function ViewerPage(): React.JSX.Element {
 
             {/* Arquivos Carregados */}
             {loadedFiles.length > 0 && (
-              <Card className="mb-8">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-primary" />
+              <Card className="mb-6 md:mb-8">
+                <CardHeader className="px-4 md:px-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <CardTitle className="text-lg md:text-xl flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                       Arquivos Carregados
                     </CardTitle>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 w-full sm:w-auto">
                       <Button
                         variant="default"
                         size="sm"
                         onClick={handleSelectFiles}
-                        className="gap-2"
+                        className="gap-2 flex-1 sm:flex-none"
                       >
                         <Upload className="h-4 w-4" />
-                        Adicionar Mais
+                        <span className="hidden sm:inline">Adicionar Mais</span>
+                        <span className="sm:hidden">Adicionar</span>
                       </Button>
                       <Button
                         variant="default"
                         size="sm"
                         onClick={cleanup}
-                        className="gap-2"
+                        className="gap-2 flex-1 sm:flex-none"
                       >
                         <X className="h-4 w-4" />
                         Limpar
@@ -689,8 +790,12 @@ export function ViewerPage(): React.JSX.Element {
                 <CardContent>
                   <div className="space-y-2">
                     {loadedFiles.map((file, index) => {
-                      const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-                      const format = SUPPORTED_FORMATS.find((f) => f.ext === extension);
+                      const extension = file.name
+                        .substring(file.name.lastIndexOf('.'))
+                        .toLowerCase();
+                      const format = SUPPORTED_FORMATS.find(
+                        f => f.ext === extension
+                      );
                       return (
                         <div
                           key={index}
@@ -699,9 +804,12 @@ export function ViewerPage(): React.JSX.Element {
                           <div className="flex items-center gap-3">
                             <File className="h-5 w-5 text-primary" />
                             <div>
-                              <p className="font-medium text-foreground">{file.name}</p>
+                              <p className="font-medium text-foreground">
+                                {file.name}
+                              </p>
                               <p className="text-sm text-foreground/70">
-                                {formatFileSize(file.size)} • {format?.name || 'Desconhecido'}
+                                {formatFileSize(file.size)} •{' '}
+                                {format?.name || 'Desconhecido'}
                               </p>
                             </div>
                           </div>
@@ -727,7 +835,8 @@ export function ViewerPage(): React.JSX.Element {
                 <CardTitle className="text-xl">Visualização 3D</CardTitle>
                 {modelLoaded && !isLoading && (
                   <CardDescription>
-                    Modelo carregado com sucesso! Use o mouse para rotacionar, arrastar para mover e scroll para zoom.
+                    Modelo carregado com sucesso! Use o mouse para rotacionar,
+                    arrastar para mover e scroll para zoom.
                   </CardDescription>
                 )}
                 {!modelLoaded && !isLoading && loadedFiles.length > 0 && (
@@ -740,9 +849,12 @@ export function ViewerPage(): React.JSX.Element {
                 {isLoading && (
                   <div className="flex flex-col items-center justify-center p-16">
                     <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-                    <CardTitle className="text-xl mb-2">Carregando modelo 3D...</CardTitle>
+                    <CardTitle className="text-xl mb-2">
+                      Carregando modelo 3D...
+                    </CardTitle>
                     <CardDescription>
-                      Aguarde enquanto processamos os arquivos e inicializamos o visualizador.
+                      Aguarde enquanto processamos os arquivos e inicializamos o
+                      visualizador.
                     </CardDescription>
                   </div>
                 )}
@@ -753,14 +865,19 @@ export function ViewerPage(): React.JSX.Element {
                     isLoading && 'hidden',
                     !isLoading && loadedFiles.length > 0 && 'min-h-[600px]'
                   )}
-                  style={{ minHeight: loadedFiles.length > 0 ? '600px' : '400px' }}
+                  style={{
+                    minHeight: loadedFiles.length > 0 ? '600px' : '400px',
+                  }}
                 />
                 {!isLoading && loadedFiles.length === 0 && (
                   <div className="flex flex-col items-center justify-center p-16 text-center">
                     <div className="mb-4 text-6xl">🎨</div>
-                    <CardTitle className="text-2xl mb-2">Nenhum modelo carregado</CardTitle>
+                    <CardTitle className="text-2xl mb-2">
+                      Nenhum modelo carregado
+                    </CardTitle>
                     <CardDescription className="text-base">
-                      Arraste arquivos 3D ou clique na área acima para começar a visualizar seus modelos.
+                      Arraste arquivos 3D ou clique na área acima para começar a
+                      visualizar seus modelos.
                     </CardDescription>
                   </div>
                 )}
@@ -771,23 +888,33 @@ export function ViewerPage(): React.JSX.Element {
             {modelLoaded && (
               <Card className="bg-primary text-primary-foreground">
                 <CardContent className="p-6">
-                  <CardTitle className="text-xl mb-4">💡 Dicas de Navegação</CardTitle>
+                  <CardTitle className="text-xl mb-4">
+                    💡 Dicas de Navegação
+                  </CardTitle>
                   <div className="grid gap-3 md:grid-cols-2">
                     <div>
                       <p className="font-semibold mb-1">🖱️ Rotação</p>
-                      <p className="text-sm opacity-90">Clique e arraste para rotacionar o modelo</p>
+                      <p className="text-sm opacity-90">
+                        Clique e arraste para rotacionar o modelo
+                      </p>
                     </div>
                     <div>
                       <p className="font-semibold mb-1">↔️ Movimento</p>
-                      <p className="text-sm opacity-90">Botão direito + arrastar para mover</p>
+                      <p className="text-sm opacity-90">
+                        Botão direito + arrastar para mover
+                      </p>
                     </div>
                     <div>
                       <p className="font-semibold mb-1">🔍 Zoom</p>
-                      <p className="text-sm opacity-90">Use a roda do mouse para aproximar/afastar</p>
+                      <p className="text-sm opacity-90">
+                        Use a roda do mouse para aproximar/afastar
+                      </p>
                     </div>
                     <div>
                       <p className="font-semibold mb-1">🔄 Reset</p>
-                      <p className="text-sm opacity-90">Clique em "Limpar" para carregar outro modelo</p>
+                      <p className="text-sm opacity-90">
+                        Clique em "Limpar" para carregar outro modelo
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -807,4 +934,3 @@ export function ViewerPage(): React.JSX.Element {
     </Layout>
   );
 }
-

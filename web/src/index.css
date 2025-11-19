@@ -203,4 +203,14 @@
     color: hsl(0 0% 60%) !important;
     opacity: 1;
   }
+
+  /* Garantir contraste no light-mode: textos/ícones devem permanecer pretos */
+  :root:not(.dark) .text-white,
+  :root:not(.dark) .text-white *,
+  :root:not(.dark) .fill-white,
+  :root:not(.dark) .stroke-white {
+    color: hsl(0 0% 0%) !important;
+    fill: hsl(0 0% 0%) !important;
+    stroke: hsl(0 0% 0%) !important;
+  }
 }

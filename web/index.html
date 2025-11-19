@@ -11,6 +11,40 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Suprimir erros de extensões do navegador -->
+    <script>
+      // Capturar erros de extensões antes do app carregar
+      window.addEventListener('error', function(e) {
+        const message = e.message || '';
+        if (
+          message.includes('Extension context invalidated') ||
+          message.includes('chrome-extension://') ||
+          message.includes('moz-extension://')
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      });
+
+      // Suprimir erros de runtime.lastError
+      if (typeof chrome !== 'undefined' && chrome.runtime) {
+        const originalRuntime = chrome.runtime;
+        Object.defineProperty(chrome, 'runtime', {
+          get: function() {
+            return new Proxy(originalRuntime, {
+              get: function(target, prop) {
+                if (prop === 'lastError') {
+                  // Limpar lastError silenciosamente
+                  return null;
+                }
+                return target[prop];
+              }
+            });
+          }
+        });
+      }
+    </script>
 </head>
 <body>
     <div id="root"></div>
