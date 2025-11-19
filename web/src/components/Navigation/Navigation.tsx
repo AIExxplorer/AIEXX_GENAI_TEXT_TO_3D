@@ -6,7 +6,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '../ThemeToggle';
 import { AuthSideMenu } from '../Auth/AuthSideMenu';
-import { useAuth } from '@/hooks/useAuth';
+import { UserMenu } from '../User/UserMenu';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
   NavigationMenu,
@@ -15,16 +16,9 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
-import { LogIn, LogOut, User } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { LogIn } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export interface NavigationProps {
   /** Classe CSS adicional */
@@ -36,18 +30,12 @@ export interface NavigationProps {
  */
 export function Navigation({ className = '' }: NavigationProps): React.JSX.Element {
   const location = useLocation();
-  const { authState, signOut, isAuthenticated } = useAuth();
+  const { user, userProfile, loading, isAuthenticated } = useAuthContext();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const isActive = (path: string): boolean => {
     return location.pathname === path;
-  };
-
-  /**
-   * Manipula logout
-   */
-  const handleSignOut = async (): Promise<void> => {
-    await signOut();
   };
 
   const navItems = [
@@ -66,10 +54,10 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 text-xl font-bold text-white transition-opacity hover:opacity-80"
+          className="flex items-center gap-2 text-xl font-bold !text-black dark:!text-white transition-opacity hover:opacity-80"
         >
           <span className="text-2xl">🎨</span>
-          <span className="font-extrabold">AIEXX 3D</span>
+          <span className="font-extrabold !text-black dark:!text-white">AIEXX 3D</span>
         </Link>
 
         {/* Navigation Menu */}
@@ -84,7 +72,7 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
                       'flex items-center gap-2 px-5 py-2.5 text-base font-semibold transition-all rounded-base border-2',
                       isActive(item.path)
                         ? 'bg-primary text-primary-foreground border-border shadow-shadow'
-                        : 'text-white border-transparent hover:bg-muted hover:border-border'
+                        : '!text-black dark:!text-white border-transparent hover:bg-muted hover:border-border'
                     )}
                   >
                     <span className="text-lg">{item.icon}</span>
@@ -99,33 +87,36 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
         {/* Right side actions */}
         <div className="flex items-center gap-4">
           {/* Auth Section */}
-          {isAuthenticated() ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="noShadow" size="icon" className="rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>
-                      {authState.user?.email?.charAt(0).toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">Minha Conta</p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {authState.user?.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sair</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {isAuthenticated ? (
+            <Button
+              variant="noShadow"
+              size="icon"
+              className="rounded-full p-0"
+              onClick={() => setShowUserMenu(true)}
+            >
+              {loading ? (
+                <Skeleton className="h-10 w-10 rounded-full" />
+              ) : (
+                <Avatar className="h-10 w-10 border-2 border-border cursor-pointer hover:opacity-80 transition-opacity">
+                  {(() => {
+                    const userMetadata = user?.user_metadata || {};
+                    const avatarUrl = userProfile?.avatar_url || userMetadata.avatar_url || userMetadata.picture;
+                    const displayName = userProfile?.full_name || userMetadata.full_name || userMetadata.name || 'Usuário';
+                    
+                    return avatarUrl ? (
+                      <AvatarImage src={avatarUrl} alt={displayName} />
+                    ) : null;
+                  })()}
+                  <AvatarFallback className="text-sm font-bold">
+                    {(() => {
+                      const userMetadata = user?.user_metadata || {};
+                      const name = userProfile?.full_name || userMetadata.full_name || userMetadata.name;
+                      return name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U';
+                    })()}
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </Button>
           ) : (
             <Button
               variant="default"
@@ -148,6 +139,13 @@ export function Navigation({ className = '' }: NavigationProps): React.JSX.Eleme
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}
         initialMode="login"
+        side="right"
+      />
+
+      {/* User Menu */}
+      <UserMenu
+        open={showUserMenu}
+        onOpenChange={setShowUserMenu}
         side="right"
       />
     </nav>

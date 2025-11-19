@@ -66,7 +66,7 @@ export function HomePage(): React.JSX.Element {
           <div className="container mx-auto px-4 py-16">
             {/* Hero Section */}
             <section className="mb-16 text-center">
-              <h1 className="mb-4 text-5xl font-bold leading-tight text-foreground md:text-6xl">
+              <h1 className="mb-4 text-5xl font-bold leading-tight !text-black dark:!text-white md:text-6xl">
                 🎨 Gere Modelos 3D com IA
               </h1>
               <p className="mx-auto mb-8 max-w-2xl text-xl text-muted-foreground">
@@ -77,15 +77,15 @@ export function HomePage(): React.JSX.Element {
                 <Button asChild size="lg" variant="default">
                   <Link to="/generate">🚀 Começar Agora</Link>
                 </Button>
-                <Button asChild size="lg" variant="neutral">
-                  <Link to="/gallery">🖼️ Ver Galeria</Link>
+                <Button asChild size="lg" variant="neutral" className="!text-black dark:!text-white">
+                  <Link to="/gallery" className="!text-black dark:!text-white">🖼️ Ver Galeria</Link>
                 </Button>
               </div>
             </section>
 
             {/* Features Section */}
             <section className="mb-16">
-              <h2 className="mb-12 text-center text-4xl font-bold text-foreground">
+              <h2 className="mb-12 text-center text-4xl font-bold !text-black dark:!text-white">
                 ✨ Recursos Principais
               </h2>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -93,7 +93,7 @@ export function HomePage(): React.JSX.Element {
                   <Card key={index} className="transition-transform hover:-translate-y-1">
                     <CardHeader>
                       <div className="mb-4 text-5xl">{feature.icon}</div>
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
+                      <CardTitle className="text-xl !text-black">{feature.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <CardDescription className="text-base">
@@ -109,7 +109,7 @@ export function HomePage(): React.JSX.Element {
             <section className="mb-16">
               <Card className="bg-background">
                 <CardHeader>
-                  <CardTitle className="text-center text-4xl">🔄 Como Funciona</CardTitle>
+                  <CardTitle className="text-center text-4xl !text-black dark:!text-white">🔄 Como Funciona</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="mx-auto max-w-2xl space-y-6">
@@ -119,7 +119,7 @@ export function HomePage(): React.JSX.Element {
                           {item.step}
                         </div>
                         <div>
-                          <h3 className="mb-2 text-xl font-semibold text-foreground">
+                          <h3 className="mb-2 text-xl font-semibold !text-black dark:!text-white">
                             {item.title}
                           </h3>
                           <p className="text-muted-foreground">

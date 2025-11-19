@@ -14,7 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Upload, X, File, Loader2, CheckCircle2, Info, LogIn } from 'lucide-react';
 import * as OV from 'online-3d-viewer';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { AuthSideMenu } from '@/components/Auth/AuthSideMenu';
 import { uploadFiles } from '@/lib/supabaseStorage';
 
@@ -39,7 +39,7 @@ export function ViewerPage(): React.JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<OV.EmbeddedViewer | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { authState, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthContext();
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -571,7 +571,7 @@ export function ViewerPage(): React.JSX.Element {
             </Card>
 
             {/* Aviso de autenticação */}
-            {!isAuthenticated() && (
+            {!isAuthenticated && (
               <Alert className="mb-8">
                 <LogIn className="h-4 w-4" />
                 <AlertTitle>Autenticação Necessária</AlertTitle>

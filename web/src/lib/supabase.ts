@@ -8,6 +8,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from './supabase-types';
 
 /**
  * URL do projeto Supabase
@@ -24,11 +25,11 @@ if (!supabaseAnonKey) {
 }
 
 /**
- * Cliente Supabase configurado
+ * Cliente Supabase configurado com tipos do banco de dados
  * 
  * @see https://supabase.com/docs/reference/javascript/creating-a-client
  */
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -36,45 +37,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-/**
- * Tipos de banco de dados do Supabase
- * 
- * Estas interfaces serão expandidas conforme o schema do banco for criado
- */
-export interface Database {
-  public: {
-    Tables: {
-      user_files: {
-        Row: {
-          id: string;
-          user_id: string;
-          file_name: string;
-          file_path: string;
-          file_type: string;
-          file_size: number;
-          created_at: string;
-          expires_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          file_name: string;
-          file_path: string;
-          file_type: string;
-          file_size: number;
-          expires_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          file_name?: string;
-          file_path?: string;
-          file_type?: string;
-          file_size?: number;
-          expires_at?: string | null;
-        };
-      };
-    };
-  };
-}
+// Re-exportar tipos para facilitar uso
+export type { Database, Tables, TablesInsert, TablesUpdate } from './supabase-types';
 
