@@ -9,6 +9,11 @@ export const APP_CONFIG = {
   name: import.meta.env.VITE_APP_NAME || 'AIEXX GENAI TEXT_TO_3D',
   version: import.meta.env.VITE_APP_VERSION || '1.0.0',
   apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  appUrl:
+    import.meta.env.VITE_APP_URL ||
+    (typeof window !== 'undefined'
+      ? window.location.origin
+      : 'http://localhost:5173'),
   isDevelopment: import.meta.env.NODE_ENV === 'development',
   isProduction: import.meta.env.NODE_ENV === 'production',
 } as const;
@@ -53,4 +58,3 @@ export const ERROR_MESSAGES = {
   UNAUTHORIZED: 'Não autorizado. Faça login novamente.',
   SERVER_ERROR: 'Erro no servidor. Tente novamente mais tarde.',
 } as const;
-

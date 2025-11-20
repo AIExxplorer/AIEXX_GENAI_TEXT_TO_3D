@@ -31,6 +31,12 @@ VITE_APP_NAME=AIEXX 3D
 # Versão da aplicação
 VITE_APP_VERSION=1.0.0
 
+# URL da aplicação (para OAuth callback)
+# Exemplo para desenvolvimento local: http://localhost:5173
+# Exemplo para produção: https://seu-app.vercel.app
+# ⚠️ IMPORTANTE: Esta URL deve ser configurada também no Supabase (Authorized URLs)
+VITE_APP_URL=http://localhost:5173
+
 # ============================================
 # Supabase Configuration
 # ============================================

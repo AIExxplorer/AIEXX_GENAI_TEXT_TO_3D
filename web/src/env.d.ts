@@ -2,7 +2,7 @@
 
 /**
  * Definições de tipos para variáveis de ambiente
- * 
+ *
  * Variáveis com prefixo VITE_ são expostas ao cliente (browser)
  * @see https://vite.dev/guide/env-and-mode.html
  */
@@ -23,6 +23,13 @@ interface ImportMetaEnv {
    * Versão da aplicação
    */
   readonly VITE_APP_VERSION: string;
+
+  /**
+   * URL da aplicação (para OAuth callback)
+   * @example https://seu-app.vercel.app
+   * @example http://localhost:5173
+   */
+  readonly VITE_APP_URL?: string;
 
   /**
    * Token do Hugging Face (se necessário)
@@ -56,4 +63,3 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
-

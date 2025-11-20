@@ -1,6 +1,6 @@
 /**
  * Hook para gerenciar autenticação com Supabase
- * 
+ *
  * Fornece funcionalidades de:
  * - Login
  * - Registro
@@ -12,8 +12,14 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
-import type { SignUpData, SignInData, AuthState, AuthResponse } from '@/types/auth';
+import type {
+  SignUpData,
+  SignInData,
+  AuthState,
+  AuthResponse,
+} from '@/types/auth';
 import type { Tables } from '@/lib/supabase-types';
+import { APP_CONFIG } from '@/utils/constants';
 
 /**
  * Retorno do hook useAuth
@@ -36,7 +42,7 @@ export interface UseAuthReturn {
 
   /**
    * Realiza login do usuário
-   * 
+   *
    * @param credentials - Credenciais de login (email e senha)
    * @returns Promise com resultado da operação
    */
@@ -44,7 +50,7 @@ export interface UseAuthReturn {
 
   /**
    * Registra um novo usuário
-   * 
+   *
    * @param data - Dados de registro (email, senha, nome completo)
    * @returns Promise com resultado da operação
    */
@@ -52,22 +58,24 @@ export interface UseAuthReturn {
 
   /**
    * Realiza logout do usuário atual
-   * 
+   *
    * @returns Promise com resultado da operação
    */
   signOut: () => Promise<{ success: boolean; error?: string }>;
 
   /**
    * Realiza login com Google OAuth
-   * 
+   *
    * @param redirectTo - URL de redirecionamento após login (opcional)
    * @returns Promise com resultado da operação
    */
-  signInWithGoogle: (redirectTo?: string) => Promise<{ success: boolean; error?: string }>;
+  signInWithGoogle: (
+    redirectTo?: string
+  ) => Promise<{ success: boolean; error?: string }>;
 
   /**
    * Verifica se o usuário está autenticado
-   * 
+   *
    * @returns true se o usuário estiver autenticado, false caso contrário
    */
   isAuthenticated: () => boolean;
@@ -75,7 +83,7 @@ export interface UseAuthReturn {
 
 /**
  * Hook para gerenciar autenticação
- * 
+ *
  * @returns Objeto com estado e funções de autenticação
  */
 export function useAuth(): UseAuthReturn {
@@ -85,23 +93,30 @@ export function useAuth(): UseAuthReturn {
     loading: true,
     error: null,
   });
-  const [userProfile, setUserProfile] = useState<Tables<'user_profiles'> | null>(null);
+  const [userProfile, setUserProfile] =
+    useState<Tables<'user_profiles'> | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
 
   /**
    * Atualiza o estado de autenticação
    */
   const updateAuthState = (updates: Partial<AuthState>) => {
-    setAuthState((prev) => ({ ...prev, ...updates }));
+    setAuthState(prev => ({ ...prev, ...updates }));
   };
 
   /**
    * Carrega o perfil do usuário
    * Se o perfil não existir, aguarda um pouco e tenta novamente (trigger pode estar criando)
    */
-  const loadUserProfile = async (userId: string, retryCount = 0): Promise<void> => {
+  const loadUserProfile = async (
+    userId: string,
+    retryCount = 0
+  ): Promise<void> => {
     try {
-      console.log('[useAuth] Carregando perfil do usuário:', { userId, retryCount });
+      console.log('[useAuth] Carregando perfil do usuário:', {
+        userId,
+        retryCount,
+      });
       setProfileLoading(true);
       const { data, error } = await supabase
         .from('user_profiles')
@@ -110,31 +125,31 @@ export function useAuth(): UseAuthReturn {
         .single();
 
       if (error) {
-        console.log('[useAuth] Erro ao buscar perfil:', { 
-          code: error.code, 
+        console.log('[useAuth] Erro ao buscar perfil:', {
+          code: error.code,
           message: error.message,
-          retryCount 
+          retryCount,
         });
-        
+
         // Se o perfil não existe e ainda não tentamos 2 vezes, aguarda e tenta novamente
         if (error.code === 'PGRST116' && retryCount < 2) {
           // Aguarda 500ms para o trigger criar o perfil
           console.log('[useAuth] Perfil não encontrado, aguardando trigger...');
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 500));
           return loadUserProfile(userId, retryCount + 1);
         }
-        
+
         if (error.code !== 'PGRST116') {
           console.warn('[useAuth] Erro ao carregar perfil:', error.message);
         }
         setUserProfile(null);
       } else {
-        console.log('[useAuth] Perfil carregado com sucesso:', { 
-          id: data.id, 
-          full_name: data.full_name, 
+        console.log('[useAuth] Perfil carregado com sucesso:', {
+          id: data.id,
+          full_name: data.full_name,
           avatar_url: data.avatar_url,
           provider: data.provider,
-          email: data.email
+          email: data.email,
         });
         setUserProfile(data);
       }
@@ -152,7 +167,10 @@ export function useAuth(): UseAuthReturn {
    */
   const loadSession = async (): Promise<void> => {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
 
       if (error) {
         throw error;
@@ -292,7 +310,7 @@ export function useAuth(): UseAuthReturn {
   const signOut = async (): Promise<{ success: boolean; error?: string }> => {
     try {
       console.log('[useAuth] Iniciando logout...');
-      
+
       // Limpar estado local primeiro
       updateAuthState({
         user: null,
@@ -305,14 +323,17 @@ export function useAuth(): UseAuthReturn {
       // Fazer logout no Supabase (com timeout mais longo)
       try {
         const signOutPromise = supabase.auth.signOut({ scope: 'global' });
-        const timeoutPromise = new Promise<never>((_, reject) => 
+        const timeoutPromise = new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('Timeout')), 5000)
         );
         await Promise.race([signOutPromise, timeoutPromise]);
         console.log('[useAuth] SignOut do Supabase concluído');
       } catch (error) {
         // Ignorar timeout ou erro - continuar com limpeza
-        console.warn('[useAuth] Timeout ou erro no signOut (continuando limpeza):', error);
+        console.warn(
+          '[useAuth] Timeout ou erro no signOut (continuando limpeza):',
+          error
+        );
       }
 
       // Limpar storage DEPOIS de chamar signOut
@@ -320,7 +341,12 @@ export function useAuth(): UseAuthReturn {
         const keysToRemove: string[] = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && (key.includes('supabase') || key.includes('sb-') || key.includes('auth'))) {
+          if (
+            key &&
+            (key.includes('supabase') ||
+              key.includes('sb-') ||
+              key.includes('auth'))
+          ) {
             keysToRemove.push(key);
           }
         }
@@ -338,9 +364,13 @@ export function useAuth(): UseAuthReturn {
       }
 
       // Verificar se realmente limpou
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
-        console.warn('[useAuth] Sessão ainda existe após logout, limpando novamente...');
+        console.warn(
+          '[useAuth] Sessão ainda existe após logout, limpando novamente...'
+        );
         // Tentar limpar novamente
         try {
           localStorage.clear();
@@ -357,7 +387,7 @@ export function useAuth(): UseAuthReturn {
     } catch (error) {
       const authError = error as AuthError;
       console.error('[useAuth] Erro ao fazer logout:', authError);
-      
+
       // Mesmo com erro, garantir que estado está limpo
       updateAuthState({
         user: null,
@@ -384,17 +414,24 @@ export function useAuth(): UseAuthReturn {
 
   /**
    * Realiza login com Google OAuth
-   * 
+   *
    * @see https://supabase.com/docs/guides/auth/social-login/auth-google
    */
-  const signInWithGoogle = async (redirectTo?: string): Promise<{ success: boolean; error?: string }> => {
+  const signInWithGoogle = async (
+    redirectTo?: string
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
       updateAuthState({ loading: true, error: null });
+
+      // Usa a URL configurada via variável de ambiente, com fallback para window.location.origin
+      const redirectUrl = redirectTo || APP_CONFIG.appUrl;
+
+      console.log('[useAuth] Iniciando OAuth com Google:', { redirectUrl });
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectTo || window.location.origin,
+          redirectTo: redirectUrl,
         },
       });
 
@@ -438,8 +475,11 @@ export function useAuth(): UseAuthReturn {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('[useAuth] Auth state changed:', { event, userId: session?.user?.id });
-      
+      console.log('[useAuth] Auth state changed:', {
+        event,
+        userId: session?.user?.id,
+      });
+
       updateAuthState({
         user: session?.user ?? null,
         session: session,
@@ -449,7 +489,7 @@ export function useAuth(): UseAuthReturn {
       // Carregar perfil quando sessão mudar
       if (session?.user) {
         // Aguardar um pouco para garantir que o trigger criou o perfil
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 300));
         await loadUserProfile(session.user.id);
       } else {
         setUserProfile(null);
@@ -472,4 +512,3 @@ export function useAuth(): UseAuthReturn {
     isAuthenticated,
   };
 }
-
